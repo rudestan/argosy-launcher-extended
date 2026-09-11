@@ -490,8 +490,7 @@ class HomeViewModel @Inject constructor(
                     storedPages = prefs.homeLayout.customGrid.pageCount
                 )
 
-                val showsEveryGame = prefs.homeLayout.selected == HomeLayoutKind.AUTO_GRID &&
-                    prefs.homeLayout.autoGrid.showAllGames
+                val showsEveryGame = prefs.homeLayout.showsEveryGame
                 if (lastShowsEveryGame != null && lastShowsEveryGame != showsEveryGame) {
                     refreshCurrentRowInternal()
                 }

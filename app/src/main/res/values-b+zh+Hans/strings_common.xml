@@ -477,6 +477,8 @@
     <string name="ui_home_layout_show_titles">显示标题</string>
     <string name="ui_home_layout_show_all_games">显示全部游戏</string>
     <string name="ui_home_layout_show_all_games_subtitle">滚动浏览平台的完整游戏库，而不是在“查看全部”处停止</string>
+    <string name="ui_home_layout_carousel_show_all_games">显示全部游戏</string>
+    <string name="ui_home_layout_carousel_show_all_games_subtitle">滚动浏览平台的完整游戏库，而不是在“查看全部”处停止</string>
     <string name="ui_home_layout_carousel_box_art">3D立体封面</string>
     <string name="ui_home_layout_auto_grid_box_art">3D立体封面</string>
     <string name="ui_home_layout_custom_grid_lanes">横向格数</string>

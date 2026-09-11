@@ -54,6 +54,7 @@ enum class HomeLayoutSettingField {
     SHOW_TITLES,
     AUTO_GRID_SHOW_ALL,
     CAROUSEL_BOX_ART,
+    CAROUSEL_SHOW_ALL,
     AUTO_GRID_BOX_ART,
     CUSTOM_GRID_LANES,
     CUSTOM_GRID_AUTO_ADD,
@@ -93,7 +94,8 @@ fun homeLayoutFieldsFor(kind: HomeLayoutKind): List<HomeLayoutSettingField> = wh
         HomeLayoutSettingField.NEIGHBOUR_PUSH,
         HomeLayoutSettingField.PLATFORM_BADGE,
         HomeLayoutSettingField.CAROUSEL_BOX_ART,
-        HomeLayoutSettingField.INVERTED
+        HomeLayoutSettingField.INVERTED,
+        HomeLayoutSettingField.CAROUSEL_SHOW_ALL
     )
     HomeLayoutKind.AUTO_GRID -> listOf(
         HomeLayoutSettingField.SCROLL_AXIS,
@@ -147,6 +149,8 @@ fun adjustHomeLayoutField(
             settings.copy(autoGrid = settings.autoGrid.copy(showTitles = direction > 0))
         HomeLayoutSettingField.AUTO_GRID_SHOW_ALL ->
             settings.copy(autoGrid = settings.autoGrid.copy(showAllGames = direction > 0))
+        HomeLayoutSettingField.CAROUSEL_SHOW_ALL ->
+            settings.copy(carousel = settings.carousel.copy(showAllGames = direction > 0))
         HomeLayoutSettingField.CAROUSEL_BOX_ART ->
             settings.copy(carousel = settings.carousel.copy(useBoxArt = direction > 0))
         HomeLayoutSettingField.AUTO_GRID_BOX_ART ->
@@ -188,6 +192,10 @@ fun toggleHomeLayoutField(settings: HomeLayoutSettings, field: HomeLayoutSetting
         HomeLayoutSettingField.AUTO_GRID_SHOW_ALL ->
             settings.copy(
                 autoGrid = settings.autoGrid.copy(showAllGames = !settings.autoGrid.showAllGames)
+            )
+        HomeLayoutSettingField.CAROUSEL_SHOW_ALL ->
+            settings.copy(
+                carousel = settings.carousel.copy(showAllGames = !settings.carousel.showAllGames)
             )
         HomeLayoutSettingField.CAROUSEL_BOX_ART ->
             settings.copy(carousel = settings.carousel.copy(useBoxArt = !settings.carousel.useBoxArt))
@@ -368,6 +376,13 @@ fun HomeLayoutSettingRow(
             title = stringResource(R.string.ui_home_layout_show_all_games),
             subtitle = stringResource(R.string.ui_home_layout_show_all_games_subtitle),
             isEnabled = settings.autoGrid.showAllGames,
+            isFocused = isFocused,
+            onToggle = { onToggle() }
+        )
+        HomeLayoutSettingField.CAROUSEL_SHOW_ALL -> SwitchPreference(
+            title = stringResource(R.string.ui_home_layout_carousel_show_all_games),
+            subtitle = stringResource(R.string.ui_home_layout_carousel_show_all_games_subtitle),
+            isEnabled = settings.carousel.showAllGames,
             isFocused = isFocused,
             onToggle = { onToggle() }
         )
