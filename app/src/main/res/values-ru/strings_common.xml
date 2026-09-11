@@ -513,6 +513,8 @@
     <string name="ui_home_layout_show_titles">Показывать названия</string>
     <string name="ui_home_layout_show_all_games">Показывать все игры</string>
     <string name="ui_home_layout_show_all_games_subtitle">Прокручивать всю библиотеку платформы вместо остановки на плитке \"Смотреть все\"</string>
+    <string name="ui_home_layout_carousel_show_all_games">Показывать все игры</string>
+    <string name="ui_home_layout_carousel_show_all_games_subtitle">Прокручивать всю библиотеку платформы вместо остановки на плитке \"Смотреть все\"</string>
     <string name="ui_home_layout_carousel_box_art">Коробки 3D</string>
     <string name="ui_home_layout_auto_grid_box_art">Коробки 3D</string>
     <string name="ui_home_layout_custom_grid_lanes">Ячеек в ширину</string>

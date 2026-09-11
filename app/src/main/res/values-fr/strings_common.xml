@@ -520,6 +520,8 @@
     <string name="ui_home_layout_show_titles">Afficher les titres</string>
     <string name="ui_home_layout_show_all_games">Afficher tous les jeux</string>
     <string name="ui_home_layout_show_all_games_subtitle">Faire défiler toute la bibliothèque d\'une plateforme au lieu de s\'arrêter sur Tout afficher</string>
+    <string name="ui_home_layout_carousel_show_all_games">Afficher tous les jeux</string>
+    <string name="ui_home_layout_carousel_show_all_games_subtitle">Faire défiler toute la bibliothèque d\'une plateforme au lieu de s\'arrêter sur Tout afficher</string>
     <string name="ui_home_layout_carousel_box_art">Boîtier 3D</string>
     <string name="ui_home_layout_auto_grid_box_art">Boîtier 3D</string>
     <string name="ui_home_layout_custom_grid_lanes">Cellules en largeur</string>

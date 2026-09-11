@@ -1095,11 +1095,8 @@ class DualHomeViewModel(
      * display answers the same setting the main one does, or the option would only work on
      * whichever screen happened to be looked at.
      */
-    private suspend fun showsEveryGame(): Boolean {
-        val layout = preferencesRepository?.userPreferences?.first()?.homeLayout ?: return false
-        return layout.selected == com.nendo.argosy.domain.model.HomeLayoutKind.AUTO_GRID &&
-            layout.autoGrid.showAllGames
-    }
+    private suspend fun showsEveryGame(): Boolean =
+        preferencesRepository?.userPreferences?.first()?.homeLayout?.showsEveryGame ?: false
 
     private suspend fun loadGamesForCurrentSectionSuspend() {
         val section = _uiState.value.currentSection ?: return

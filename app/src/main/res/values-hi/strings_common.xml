@@ -497,6 +497,8 @@
     <string name="ui_home_layout_show_titles">टाइटल दिखाएं</string>
     <string name="ui_home_layout_show_all_games">हर गेम दिखाएं</string>
     <string name="ui_home_layout_show_all_games_subtitle">\'सभी देखें\' पर रुकने के बजाय पूरे प्लेटफ़ॉर्म की लाइब्रेरी स्क्रॉल करें</string>
+    <string name="ui_home_layout_carousel_show_all_games">हर गेम दिखाएं</string>
+    <string name="ui_home_layout_carousel_show_all_games_subtitle">\'सभी देखें\' पर रुकने के बजाय पूरे प्लेटफ़ॉर्म की लाइब्रेरी स्क्रॉल करें</string>
     <string name="ui_home_layout_carousel_box_art">3D बॉक्स आर्ट</string>
     <string name="ui_home_layout_auto_grid_box_art">3D बॉक्स आर्ट</string>
     <string name="ui_home_layout_custom_grid_lanes">आड़े सेल</string>

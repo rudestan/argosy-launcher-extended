@@ -485,6 +485,8 @@
     <string name="ui_home_layout_show_titles">顯示標題</string>
     <string name="ui_home_layout_show_all_games">顯示所有遊戲</string>
     <string name="ui_home_layout_show_all_games_subtitle">捲動整個平台的遊戲庫，而不是停在查看全部</string>
+    <string name="ui_home_layout_carousel_show_all_games">顯示所有遊戲</string>
+    <string name="ui_home_layout_carousel_show_all_games_subtitle">捲動整個平台的遊戲庫，而不是停在查看全部</string>
     <string name="ui_home_layout_carousel_box_art">3D盒裝美術圖</string>
     <string name="ui_home_layout_auto_grid_box_art">3D盒裝美術圖</string>
     <string name="ui_home_layout_custom_grid_lanes">橫向格數</string>

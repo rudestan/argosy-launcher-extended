@@ -497,6 +497,8 @@
     <string name="ui_home_layout_show_titles">Titel anzeigen</string>
     <string name="ui_home_layout_show_all_games">Alle Spiele anzeigen</string>
     <string name="ui_home_layout_show_all_games_subtitle">Durch die gesamte Bibliothek einer Plattform scrollen, statt bei \"Alle anzeigen\" zu stoppen</string>
+    <string name="ui_home_layout_carousel_show_all_games">Alle Spiele anzeigen</string>
+    <string name="ui_home_layout_carousel_show_all_games_subtitle">Durch die gesamte Bibliothek einer Plattform scrollen, statt bei \"Alle anzeigen\" zu stoppen</string>
     <string name="ui_home_layout_carousel_box_art">3D-Box-Art</string>
     <string name="ui_home_layout_auto_grid_box_art">3D-Box-Art</string>
     <string name="ui_home_layout_custom_grid_lanes">Zellen (Breite)</string>

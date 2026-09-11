@@ -34,7 +34,8 @@ data class CarouselConfig(
     val restingScale: Float = 0.5f,
     val neighbourPush: Boolean = true,
     val showPlatformBadge: Boolean = true,
-    val useBoxArt: Boolean = false
+    val useBoxArt: Boolean = false,
+    val showAllGames: Boolean = false
 ) : HomeLayoutConfig {
     override val kind: HomeLayoutKind get() = HomeLayoutKind.CAROUSEL
 
@@ -132,6 +133,21 @@ data class HomeLayoutSettings(
             HomeLayoutKind.CUSTOM_GRID -> customGrid
         }
 
+    /**
+     * Whether home rows carry a platform's whole library instead of stopping at View All.
+     *
+     * Each layout owns its own answer, so the question is asked of the selected one rather than
+     * of a single layout. Read through this property rather than reaching for a layout's flag
+     * directly: home, its library delegate and the companion display each gate on it, and a
+     * reader that names one layout is a reader the next layout silently misses.
+     */
+    val showsEveryGame: Boolean
+        get() = when (selected) {
+            HomeLayoutKind.CAROUSEL -> carousel.showAllGames
+            HomeLayoutKind.AUTO_GRID -> autoGrid.showAllGames
+            HomeLayoutKind.CUSTOM_GRID -> false
+        }
+
     fun toJson(): String = JSONObject().apply {
         put(KEY_SELECTED, selected.name)
         put(
@@ -144,6 +160,7 @@ data class HomeLayoutSettings(
                 put(KEY_NEIGHBOUR_PUSH, carousel.neighbourPush)
                 put(KEY_PLATFORM_BADGE, carousel.showPlatformBadge)
                 put(KEY_USE_BOX_ART, carousel.useBoxArt)
+                put(KEY_SHOW_ALL_GAMES, carousel.showAllGames)
             }
         )
         put(
@@ -237,7 +254,11 @@ data class HomeLayoutSettings(
                     showPlatformBadge = carousel?.optBoolean(KEY_PLATFORM_BADGE, defaults.carousel.showPlatformBadge)
                         ?: defaults.carousel.showPlatformBadge,
                     useBoxArt = carousel?.optBoolean(KEY_USE_BOX_ART, defaults.carousel.useBoxArt)
-                        ?: defaults.carousel.useBoxArt
+                        ?: defaults.carousel.useBoxArt,
+                    showAllGames = carousel?.optBoolean(
+                        KEY_SHOW_ALL_GAMES,
+                        defaults.carousel.showAllGames
+                    ) ?: defaults.carousel.showAllGames
                 ),
                 autoGrid = AutoGridConfig(
                     scrollAxis = enumOrDefault(

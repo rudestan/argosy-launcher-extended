@@ -1008,6 +1008,12 @@
     <!-- Second line under that row. "View All" names the card that ends a row and matches
          ui_view_all_outline_label. -->
     <string name="ui_home_layout_show_all_games_subtitle">Scroll a platform\'s whole library instead of stopping at View All</string>
+    <!-- Settings row on the carousel: whether a row runs past the View All card into the rest of
+         the platform. Same wording as ui_home_layout_show_all_games, which is the auto grid's own
+         row, and deliberately its own key: two usage sites, two keys, so either can be reworded
+         or translated differently without disturbing the other. -->
+    <string name="ui_home_layout_carousel_show_all_games">Show Every Game</string>
+    <string name="ui_home_layout_carousel_show_all_games_subtitle">Scroll a platform\'s whole library instead of stopping at View All</string>
     <!-- Settings row on the carousel: whether covers draw as 3D boxes. "3D" is the shape, not a
          word to translate. -->
     <string name="ui_home_layout_carousel_box_art">3D Box Art</string>

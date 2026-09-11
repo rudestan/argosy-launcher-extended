@@ -440,9 +440,7 @@ class HomeLibraryDelegate @Inject constructor(
      * into the library screen. Only the auto grid offers this: a carousel walks one cover at a time,
      * so an uncapped rail there is a corridor rather than a shortcut.
      */
-    private fun showsEveryGame(prefs: UserPreferences): Boolean =
-        prefs.homeLayout.selected == HomeLayoutKind.AUTO_GRID &&
-            prefs.homeLayout.autoGrid.showAllGames
+    private fun showsEveryGame(prefs: UserPreferences): Boolean = prefs.homeLayout.showsEveryGame
 
     /**
      * Put a whole platform in the order the user chose for their library.
