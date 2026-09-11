@@ -118,13 +118,13 @@ internal sealed class HomeScreenItem(
 
     data object HideRecent : HomeScreenItem(
         key = "hideRecentRowHome",
-        section = "content",
+        section = "platformSelector",
         visibleWhen = { it.homeLayout.selected != HomeLayoutKind.CUSTOM_GRID }
     )
 
     data object HidePicks : HomeScreenItem(
         key = "hideRecommendationsRowHome",
-        section = "content",
+        section = "platformSelector",
         visibleWhen = { it.homeLayout.selected != HomeLayoutKind.CUSTOM_GRID }
     )
 
@@ -135,7 +135,7 @@ internal sealed class HomeScreenItem(
      */
     data object HideEmptyPlatforms : HomeScreenItem(
         key = "hideEmptyPlatformsHome",
-        section = "content",
+        section = "platformSelector",
         visibleWhen = { it.homeLayout.selected != HomeLayoutKind.CUSTOM_GRID }
     )
 
@@ -165,7 +165,7 @@ internal sealed class HomeScreenItem(
             Header("contentHeader", "content", R.string.settings_home_screen_section_content)
         private val PlatformSelectorHeaderRow = Header(
             "platformSelectorHeaderRow",
-            "content",
+            "platformSelector",
             R.string.settings_home_screen_section_platform_selector
         )
 
@@ -181,9 +181,9 @@ internal sealed class HomeScreenItem(
                     .toTypedArray(),
                 ContentHeader,
                 InstalledOnly,
+                *homeRailFields().map { LayoutField(it) }.toTypedArray(),
                 PlatformSelectorHeaderRow,
                 HideRecent, HidePicks, HideEmptyPlatforms,
-                *homeRailFields().map { LayoutField(it) }.toTypedArray(),
                 BackgroundHeader,
                 Background, GameArtwork, CustomImage, Blur, Saturation, Opacity,
                 VideoHeader,
@@ -216,6 +216,7 @@ private fun homeScreenLayout(display: DisplayState) = SettingsLayout<HomeScreenI
             "background" -> R.string.settings_home_screen_section_background
             "video" -> R.string.settings_home_screen_section_video
             "content" -> R.string.settings_home_screen_section_content
+            "platformSelector" -> R.string.settings_home_screen_section_platform_selector
             else -> null
         }
     }

@@ -440,7 +440,8 @@ data class HomeUiState(
             is HomeRow.Platform -> platformItems
             HomeRow.Continue -> when {
                 hideRecentRowHome || recentGames.isEmpty() -> emptyList()
-                layoutKind == com.nendo.argosy.domain.model.HomeLayoutKind.CAROUSEL ->
+                layoutKind == com.nendo.argosy.domain.model.HomeLayoutKind.CAROUSEL &&
+                    !carouselConfig.showAllGames ->
                     recentGames.take(CAROUSEL_RECENT_LIMIT).map { HomeRowItem.Game(it) } +
                         HomeRowItem.ViewAll(sourceFilter = "PLAYABLE")
                 else -> recentGames.map { HomeRowItem.Game(it) }
