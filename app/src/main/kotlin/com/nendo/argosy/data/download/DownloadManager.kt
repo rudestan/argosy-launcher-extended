@@ -76,6 +76,7 @@ data class DownloadProgress(
     val extractionTotalBytes: Long = 0,
     val isMultiFileRom: Boolean = false,
     val bytesPerSecond: Long = 0,
+    val averageBytesPerSecond: Long = 0,
     val statusMessage: String? = null,
     val isAwaitingServer: Boolean = false,
     val selectedFileIds: List<Long>? = null,
@@ -90,6 +91,17 @@ data class DownloadProgress(
 
     val extractionPercent: Float
         get() = if (extractionTotalBytes > 0) extractionBytesWritten.toFloat() / extractionTotalBytes else 0f
+
+    /**
+     * Seconds until this transfer finishes, or null when there is nothing honest to show -
+     * a stalled or paused transfer, a server that never sent a size, or bytes already complete.
+     */
+    val secondsRemaining: Long?
+        get() {
+            if (averageBytesPerSecond <= 0 || totalBytes <= 0) return null
+            val remaining = totalBytes - bytesDownloaded
+            return if (remaining > 0) remaining / averageBytesPerSecond else null
+        }
 
     val isDiscDownload: Boolean get() = discId != null
     val isGameFileDownload: Boolean get() = gameFileId != null

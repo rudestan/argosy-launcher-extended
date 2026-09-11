@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -69,9 +70,14 @@ import com.nendo.argosy.ui.theme.Dimens
 import com.nendo.argosy.ui.theme.LocalArgosyTheme
 import com.nendo.argosy.ui.theme.LocalUiScale
 import com.nendo.argosy.ui.theme.Motion
+import com.nendo.argosy.ui.theme.ProvideArgosyThemeLocals
+import com.nendo.argosy.ui.theme.ThemeState
+import com.nendo.argosy.ui.theme.argosyColorScheme
+import com.nendo.argosy.ui.theme.rememberArgosyPalette
 import com.nendo.argosy.ui.theme.generated.ColorTokens
 import com.nendo.argosy.ui.theme.generated.ComponentDefaults
 import com.nendo.argosy.util.formatBytes
+import com.nendo.argosy.util.formatTimeRemaining
 
 @Composable
 fun DownloadsScreen(
@@ -158,9 +164,13 @@ fun DownloadsScreen(
             val completedGroups = uiState.completedGroups
 
             if (activeGroups.isNotEmpty()) {
-                val hasExtracting = activeGroups.any { it.aggregate(context).state == DownloadState.EXTRACTING }
-                val hasMoving = activeGroups.any { it.aggregate(context).state == DownloadState.MOVING }
-                val totalSpeed = activeGroups.sumOf { it.aggregate(context).bytesPerSecond }
+                val activeAggregates = activeGroups.map { it.aggregate(context) }
+                val hasExtracting = activeAggregates.any { it.state == DownloadState.EXTRACTING }
+                val hasMoving = activeAggregates.any { it.state == DownloadState.MOVING }
+                val totalSpeed = activeAggregates.sumOf { it.bytesPerSecond }
+                val queueAverage = activeAggregates.sumOf { it.averageBytesPerSecond }
+                val queueRemaining = activeAggregates.sumOf { (it.totalBytes - it.bytesDownloaded).coerceAtLeast(0) }
+                val queueSeconds = if (queueAverage > 0 && queueRemaining > 0) queueRemaining / queueAverage else null
                 item {
                     val headerText = stringResource(
                         when {
@@ -170,7 +180,11 @@ fun DownloadsScreen(
                             else -> R.string.downloads_section_header_active
                         }
                     )
-                    SectionHeader(headerText, if (totalSpeed > 0) formatSpeed(totalSpeed) else null)
+                    SectionHeader(
+                        title = headerText,
+                        speedSuffix = if (totalSpeed > 0) formatSpeed(totalSpeed) else null,
+                        etaSuffix = if (totalSpeed > 0 && queueSeconds != null) formatEta(queueSeconds) else null
+                    )
                 }
                 itemsIndexed(activeGroups, key = { _, g -> g.primary.id }) { index, group ->
                     Column {
@@ -301,7 +315,7 @@ private fun GroupFileRows(group: DownloadGroup) {
 }
 
 @Composable
-private fun SectionHeader(title: String, speedSuffix: String? = null) {
+private fun SectionHeader(title: String, speedSuffix: String? = null, etaSuffix: String? = null) {
     Row(
         modifier = Modifier.padding(bottom = Dimens.spacingSm),
         horizontalArrangement = Arrangement.spacedBy(Dimens.spacingSm),
@@ -315,6 +329,13 @@ private fun SectionHeader(title: String, speedSuffix: String? = null) {
         if (speedSuffix != null) {
             Text(
                 text = speedSuffix,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+            )
+        }
+        if (etaSuffix != null) {
+            Text(
+                text = etaSuffix,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
             )
@@ -443,12 +464,22 @@ private fun DownloadItem(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f, fill = false)
                         )
+                        val secondsRemaining = download.secondsRemaining
                         if (download.bytesPerSecond > 0) {
-                            Text(
-                                text = formatSpeed(download.bytesPerSecond),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = theme.textMute
-                            )
+                            Row(horizontalArrangement = Arrangement.spacedBy(Dimens.spacingSm)) {
+                                Text(
+                                    text = formatSpeed(download.bytesPerSecond),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = theme.textMute
+                                )
+                                if (secondsRemaining != null) {
+                                    Text(
+                                        text = formatEta(secondsRemaining),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = theme.textMute
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -581,3 +612,120 @@ private fun formatSpeed(bytesPerSecond: Long): String {
     return stringResource(R.string.downloads_speed_suffix, formatBytes(bytesPerSecond))
 }
 
+@Composable
+private fun formatEta(secondsRemaining: Long): String {
+    return stringResource(
+        R.string.downloads_eta_suffix,
+        formatTimeRemaining(LocalContext.current, secondsRemaining)
+    )
+}
+
+private const val PREVIEW_RETROID_POCKET_6 = "spec:width=1920px,height=1080px,dpi=400"
+
+/**
+ * Argosy's CompositionLocals plus its Material colour scheme, so a preview shows the real
+ * palette rather than Material defaults. [ALauncherTheme] cannot be reused here because it
+ * resolves a ThemeViewModel through Hilt, which no preview host provides.
+ */
+@Composable
+private fun PreviewSurface(content: @Composable () -> Unit) {
+    val themeState = ThemeState()
+    val palette = rememberArgosyPalette(themeState)
+    ProvideArgosyThemeLocals(themeState = themeState, palette = palette) {
+        MaterialTheme(colorScheme = argosyColorScheme(palette)) {
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(Dimens.spacingLg),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spacingLg)
+            ) {
+                content()
+            }
+        }
+    }
+}
+
+private fun previewDownload(
+    downloaded: Long,
+    total: Long,
+    speed: Long,
+    average: Long,
+    state: DownloadState = DownloadState.DOWNLOADING
+) = DownloadProgress(
+    id = 1L,
+    gameId = 1L,
+    rommId = 1L,
+    fileName = "rom.zip",
+    gameTitle = "Preview Title",
+    platformSlug = "snes",
+    coverPath = null,
+    bytesDownloaded = downloaded,
+    totalBytes = total,
+    state = state,
+    bytesPerSecond = speed,
+    averageBytesPerSecond = average
+)
+
+@Preview(name = "Downloading with estimate", device = PREVIEW_RETROID_POCKET_6)
+@Composable
+private fun DownloadRowWithEstimatePreview() {
+    PreviewSurface {
+        SectionHeader(
+            title = stringResource(R.string.downloads_section_header_downloading),
+            speedSuffix = formatSpeed(12_400_000L),
+            etaSuffix = formatEta(366L)
+        )
+        DownloadItem(
+            download = previewDownload(
+                downloaded = 18_200_000L,
+                total = 34_100_000L,
+                speed = 8_100_000L,
+                average = 8_100_000L
+            ),
+            isInActiveList = true,
+            isFocused = true,
+            availableStorage = 64_000_000_000L
+        )
+        DownloadItem(
+            download = previewDownload(
+                downloaded = 4_300_000L,
+                total = 21_000_000L,
+                speed = 4_300_000L,
+                average = 4_300_000L
+            ),
+            isInActiveList = true,
+            isFocused = false,
+            availableStorage = 64_000_000_000L
+        )
+    }
+}
+
+@Preview(name = "Estimate withheld", device = PREVIEW_RETROID_POCKET_6)
+@Composable
+private fun DownloadRowWithoutEstimatePreview() {
+    PreviewSurface {
+        DownloadItem(
+            download = previewDownload(
+                downloaded = 9_000_000L,
+                total = 0L,
+                speed = 3_000_000L,
+                average = 3_000_000L
+            ),
+            isInActiveList = true,
+            isFocused = true,
+            availableStorage = 64_000_000_000L
+        )
+        DownloadItem(
+            download = previewDownload(
+                downloaded = 12_000_000L,
+                total = 40_000_000L,
+                speed = 0L,
+                average = 0L,
+                state = DownloadState.PAUSED
+            ),
+            isInActiveList = true,
+            isFocused = false,
+            availableStorage = 64_000_000_000L
+        )
+    }
+}

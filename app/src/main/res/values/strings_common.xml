@@ -1567,6 +1567,14 @@
     <string name="util_formatters_time_to_beat_hours">%1$dh</string>
     <string name="util_formatters_time_to_beat_half_hours">%1$d.5h</string>
 
+    <!-- formatTimeRemaining(context, seconds): time left on an in-flight transfer, abbreviated
+         to letter units, matching the unlocalized letter-suffix convention of
+         util_formatters_playtime_* above. Its own keys rather than shared ones, because the
+         usage site differs even where the English coincides. -->
+    <string name="util_formatters_remaining_seconds">%1$ds</string>
+    <string name="util_formatters_remaining_minutes">%1$dm</string>
+    <string name="util_formatters_remaining_hours_minutes">%1$dh %2$dm</string>
+
     <!-- Play time on a curated home-grid tile (ui/components/HomeCustomGrid.kt). Same
          phrasing as util_formatters_playtime_* above, a different usage site and so its own
          keys rather than a shared one. -->
