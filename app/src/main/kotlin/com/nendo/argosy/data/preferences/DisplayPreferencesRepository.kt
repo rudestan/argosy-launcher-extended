@@ -197,7 +197,7 @@ class DisplayPreferencesRepository @Inject constructor(
         val DUAL_SCREEN_INPUT_FOCUS = stringPreferencesKey("dual_screen_input_focus")
         val INSTALLED_ONLY_HOME = booleanPreferencesKey("installed_only_home")
         val HIDE_RECENT_ROW_HOME = booleanPreferencesKey("hide_recent_row_home")
-        val HIDE_RECOMMENDATIONS_ROW_HOME = booleanPreferencesKey("hide_recommendations_row_home")
+        val HIDE_RECOMMENDATIONS_ROW_HOME = booleanPreferencesKey("hide_picks_row_home")
         val HIDE_EMPTY_PLATFORMS_HOME = booleanPreferencesKey("hide_empty_platforms_home")
     }
 
