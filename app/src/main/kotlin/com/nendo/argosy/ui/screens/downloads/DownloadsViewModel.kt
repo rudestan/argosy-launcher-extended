@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import com.nendo.argosy.R
 import com.nendo.argosy.data.download.DownloadManager
 import com.nendo.argosy.data.download.DownloadProgress
+import com.nendo.argosy.data.download.DownloadSpeedAverager
 import com.nendo.argosy.data.download.DownloadQueueState
 import com.nendo.argosy.data.download.DownloadState
 import com.nendo.argosy.data.download.MediaDownloadManager
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -55,6 +57,7 @@ data class DownloadGroup(val items: List<DownloadProgress>) {
             bytesDownloaded = items.sumOf { it.bytesDownloaded },
             totalBytes = items.sumOf { it.totalBytes },
             bytesPerSecond = items.sumOf { it.bytesPerSecond },
+            averageBytesPerSecond = items.sumOf { it.averageBytesPerSecond },
             state = state,
             statusMessage = context.resources.getQuantityString(
                 R.plurals.downloads_group_progress,
@@ -190,6 +193,8 @@ class DownloadsViewModel @Inject constructor(
 
     private var mediaItemIdsByRowId: Map<Long, String> = emptyMap()
 
+    private val speedAverager = DownloadSpeedAverager()
+
     init {
         viewModelScope.launch {
             combine(
@@ -212,24 +217,31 @@ class DownloadsViewModel @Inject constructor(
                     }
                 )
 
-                val currentFocusedId = _uiState.value.focusedDownloadId
-                val allItems = buildList {
-                    addAll(merged.activeDownloads)
-                    addAll(merged.queue)
-                    addAll(merged.completed)
-                }
-
-                val newFocusedId = when {
-                    allItems.isEmpty() -> null
-                    currentFocusedId != null && allItems.any { it.id == currentFocusedId } -> currentFocusedId
-                    else -> allItems.firstOrNull()?.id
-                }
-
-                _uiState.value = _uiState.value.copy(
-                    downloadState = merged,
-                    focusedDownloadId = newFocusedId,
-                    maxActiveSlots = maxActive
+                val estimated = merged.copy(
+                    activeDownloads = merged.activeDownloads.map {
+                        it.copy(averageBytesPerSecond = speedAverager.average(it.id, it.bytesPerSecond))
+                    }
                 )
+                speedAverager.retain(estimated.activeDownloads.map { it.id }.toSet())
+
+                val allItems = buildList {
+                    addAll(estimated.activeDownloads)
+                    addAll(estimated.queue)
+                    addAll(estimated.completed)
+                }
+
+                _uiState.update { current ->
+                    val focusedId = current.focusedDownloadId
+                    current.copy(
+                        downloadState = estimated,
+                        focusedDownloadId = when {
+                            allItems.isEmpty() -> null
+                            focusedId != null && allItems.any { it.id == focusedId } -> focusedId
+                            else -> allItems.firstOrNull()?.id
+                        },
+                        maxActiveSlots = maxActive
+                    )
+                }
             }
         }
 

@@ -13,6 +13,7 @@ import java.util.Locale
 private const val SECONDS_PER_MINUTE = 60
 private const val MINUTES_PER_HOUR = 60
 private const val SECONDS_PER_HALF_HOUR = 30 * SECONDS_PER_MINUTE
+private const val SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR
 private const val MINUTES_PER_DAY = 24 * MINUTES_PER_HOUR
 private const val DAYS_PER_MONTH = 30L
 
@@ -51,6 +52,28 @@ fun formatTimeToBeat(context: Context, seconds: Int?): String? {
         halfHours % 2 == 1 -> context.getString(R.string.util_formatters_time_to_beat_half_hours, halfHours / 2)
         else -> context.getString(R.string.util_formatters_time_to_beat_hours, halfHours / 2)
     }
+}
+
+/**
+ * Time left on a transfer, abbreviated to letter units like the play-time formatters.
+ *
+ * A sub-second remainder rounds up to one second rather than down to zero, because "0s" reads
+ * as finished to someone still watching the bar move.
+ */
+fun formatTimeRemaining(context: Context, seconds: Long): String = when {
+    seconds < SECONDS_PER_MINUTE -> context.getString(
+        R.string.util_formatters_remaining_seconds,
+        seconds.coerceAtLeast(1)
+    )
+    seconds < SECONDS_PER_HOUR -> context.getString(
+        R.string.util_formatters_remaining_minutes,
+        seconds / SECONDS_PER_MINUTE
+    )
+    else -> context.getString(
+        R.string.util_formatters_remaining_hours_minutes,
+        seconds / SECONDS_PER_HOUR,
+        (seconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE
+    )
 }
 
 fun formatRelativeTime(

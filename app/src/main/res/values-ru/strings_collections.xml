@@ -185,6 +185,7 @@
     <string name="downloads_completed_status_failed_fallback">Не удалось загрузить</string>
     <string name="downloads_completed_status_installed">Установлено</string>
     <string name="downloads_speed_suffix">%1$s/с</string>
+    <string name="downloads_eta_suffix">осталось %1$s</string>
 
     <string name="downloads_action_pause">Пауза</string>
     <string name="downloads_action_resume">Продолжить</string>

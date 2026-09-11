@@ -208,4 +208,19 @@ class FormattersTest {
         assertEquals(res(R.string.util_formatters_time_to_beat_hours, 27), formatTimeToBeat(context, 97_200))
         assertEquals(res(R.string.util_formatters_time_to_beat_hours, 1), formatTimeToBeat(context, 3_600))
     }
+
+    @Test
+    fun `time remaining picks its unit by threshold`() {
+        assertEquals(res(R.string.util_formatters_remaining_seconds, 45L), formatTimeRemaining(context, 45))
+        assertEquals(res(R.string.util_formatters_remaining_seconds, 59L), formatTimeRemaining(context, 59))
+        assertEquals(res(R.string.util_formatters_remaining_minutes, 1L), formatTimeRemaining(context, 60))
+        assertEquals(res(R.string.util_formatters_remaining_minutes, 59L), formatTimeRemaining(context, 3_599))
+        assertEquals(res(R.string.util_formatters_remaining_hours_minutes, 1L, 0L), formatTimeRemaining(context, 3_600))
+        assertEquals(res(R.string.util_formatters_remaining_hours_minutes, 2L, 3L), formatTimeRemaining(context, 7_380))
+    }
+
+    @Test
+    fun `a sub-second remainder still reads as a second left`() {
+        assertEquals(res(R.string.util_formatters_remaining_seconds, 1L), formatTimeRemaining(context, 0))
+    }
 }

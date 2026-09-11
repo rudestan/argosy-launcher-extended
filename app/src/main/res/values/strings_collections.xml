@@ -283,6 +283,10 @@
     <string name="downloads_completed_status_installed">Installed</string>
     <!-- Transfer speed suffix; %1$s is an already-formatted byte rate, for example "2.4 MB". -->
     <string name="downloads_speed_suffix">%1$s/s</string>
+    <!-- Estimated time left on a download; %1$s is an already-formatted duration such as
+         "2m". Rendered beside downloads_speed_suffix, never merged with it, so a locale can
+         order the unit and the word its own way. -->
+    <string name="downloads_eta_suffix">%1$s left</string>
 
     <!-- === downloads/DownloadsViewModel.kt: confirm/toggle action labels === -->
     <!-- Button. Verb: pause an active download. -->

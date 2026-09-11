@@ -164,6 +164,7 @@
     <string name="downloads_completed_status_failed_fallback">下載失敗</string>
     <string name="downloads_completed_status_installed">已安裝</string>
     <string name="downloads_speed_suffix">%1$s/s</string>
+    <string name="downloads_eta_suffix">剩餘 %1$s</string>
 
     <string name="downloads_action_pause">暫停</string>
     <string name="downloads_action_resume">繼續</string>
