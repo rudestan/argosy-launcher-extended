@@ -900,6 +900,27 @@ class DisplaySettingsDelegate @Inject constructor(
         }
     }
 
+    fun setHideRecentRowHome(scope: CoroutineScope, enabled: Boolean) {
+        scope.launch {
+            preferencesRepository.setHideRecentRowHome(enabled)
+            _state.update { it.copy(hideRecentRowHome = enabled) }
+        }
+    }
+
+    fun setHideRecommendationsRowHome(scope: CoroutineScope, enabled: Boolean) {
+        scope.launch {
+            preferencesRepository.setHideRecommendationsRowHome(enabled)
+            _state.update { it.copy(hideRecommendationsRowHome = enabled) }
+        }
+    }
+
+    fun setHideEmptyPlatformsHome(scope: CoroutineScope, enabled: Boolean) {
+        scope.launch {
+            preferencesRepository.setHideEmptyPlatformsHome(enabled)
+            _state.update { it.copy(hideEmptyPlatformsHome = enabled) }
+        }
+    }
+
     fun hasScreenCapturePermission(): Boolean = screenCaptureManager.hasPermission.value
 
     fun observeScreenCapturePermission(scope: CoroutineScope) {

@@ -195,6 +195,9 @@ class UserPreferencesRepository @Inject constructor(
             displayRoleOverride = display.displayRoleOverride,
             dualScreenInputFocus = display.dualScreenInputFocus,
             installedOnlyHome = display.installedOnlyHome,
+            hideRecentRowHome = display.hideRecentRowHome,
+            hideRecommendationsRowHome = display.hideRecommendationsRowHome,
+            hideEmptyPlatformsHome = display.hideEmptyPlatformsHome,
             socialSessionToken = sync.socialSessionToken,
             socialUserId = sync.socialUserId,
             socialUsername = sync.socialUsername,
@@ -324,6 +327,11 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setDisplayRoleOverride(override: DisplayRoleOverride) = displayPrefs.setDisplayRoleOverride(override)
     suspend fun setDualScreenInputFocus(focus: DualScreenInputFocus) = displayPrefs.setDualScreenInputFocus(focus)
     suspend fun setInstalledOnlyHome(enabled: Boolean) = displayPrefs.setInstalledOnlyHome(enabled)
+    suspend fun setHideRecentRowHome(enabled: Boolean) = displayPrefs.setHideRecentRowHome(enabled)
+    suspend fun setHideRecommendationsRowHome(enabled: Boolean) =
+        displayPrefs.setHideRecommendationsRowHome(enabled)
+    suspend fun setHideEmptyPlatformsHome(enabled: Boolean) =
+        displayPrefs.setHideEmptyPlatformsHome(enabled)
 
     // --- Sync delegates ---
 
@@ -823,6 +831,9 @@ data class UserPreferences(
     val displayRoleOverride: DisplayRoleOverride = DisplayRoleOverride.AUTO,
     val dualScreenInputFocus: DualScreenInputFocus = DualScreenInputFocus.AUTO,
     val installedOnlyHome: Boolean = false,
+    val hideRecentRowHome: Boolean = false,
+    val hideRecommendationsRowHome: Boolean = false,
+    val hideEmptyPlatformsHome: Boolean = false,
     val socialSessionToken: String? = null,
     val socialUserId: String? = null,
     val socialUsername: String? = null,

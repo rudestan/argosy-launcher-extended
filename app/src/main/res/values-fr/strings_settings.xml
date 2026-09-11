@@ -232,6 +232,16 @@
     <string name="settings_home_screen_installed_only_title">Jeux installés uniquement</string>
     <string name="settings_home_screen_installed_only_subtitle">N\'afficher que les jeux téléchargés sur l\'écran d\'accueil</string>
 
+    <string name="settings_home_screen_section_platform_selector">Sélecteur de plateforme</string>
+    <string name="settings_home_screen_hide_recent_title">Masquer Récent</string>
+    <string name="settings_home_screen_hide_recent_subtitle">Retirer Récent du sélecteur de plateforme</string>
+    <string name="settings_home_screen_hide_picks_title">Masquer Sélection</string>
+    <string name="settings_home_screen_hide_picks_subtitle">Retirer Sélection du sélecteur de plateforme</string>
+    <string name="settings_home_screen_hide_empty_platforms_title">Masquer les plateformes vides</string>
+    <string name="settings_home_screen_hide_empty_platforms_subtitle">Retirer du sélecteur les plateformes sans jeu installé</string>
+    <string name="settings_home_screen_hide_empty_platforms_locked_value">Indisponible</string>
+    <string name="settings_home_screen_hide_empty_platforms_locked_subtitle">Nécessite &quot;Jeux installés uniquement&quot;</string>
+
     <!-- ===== Section Sauvegardes ===== -->
 
     <string name="settings_saves_section_sync">SYNCHRO</string>

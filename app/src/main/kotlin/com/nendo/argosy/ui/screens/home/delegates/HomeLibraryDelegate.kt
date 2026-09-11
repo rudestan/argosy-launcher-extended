@@ -156,6 +156,7 @@ class HomeLibraryDelegate @Inject constructor(
         val allPlatforms = platformRepository.getPlatformsWithGames()
         val platforms = allPlatforms.filter { it.id != LocalPlatformIds.STEAM && it.id != LocalPlatformIds.ANDROID }
         cachedPlatformDisplayNames = allPlatforms.associate { it.id to it.getDisplayName() }
+        val downloadedCounts = gameRepository.observeDownloadedCountsByPlatform().first()
         var favorites = gameRepository.getFavorites()
         val androidGames = gameRepository.getByPlatformSorted(LocalPlatformIds.ANDROID, limit = PLATFORM_GAMES_LIMIT)
             .let { if (installedOnly) filterPlayable(it) else it }
@@ -184,7 +185,10 @@ class HomeLibraryDelegate @Inject constructor(
         val validatedRecent = sortedRecent.take(RECENT_GAMES_LIMIT).map { it.toUi() }
         recentGamesCache.set(RecentGamesCache(validatedRecent, recentGamesCache.get().version))
 
-        val platformUis = platforms.map { it.toHomePlatformUi(emulatorDetector) }
+        val platformUis = platforms.map {
+            it.toHomePlatformUi(emulatorDetector)
+                .copy(hasInstalledGames = (downloadedCounts[it.id] ?: 0) > 0)
+        }
         val favoriteUis = favorites.map { it.toUi() }
         val androidGameUis = androidGames.map { it.toUi() }
         val steamGameUis = steamGames.map { it.toUi() }
@@ -229,7 +233,11 @@ class HomeLibraryDelegate @Inject constructor(
             platformRepository.observePlatformsWithGames().collect { platforms ->
                 cachedPlatformDisplayNames = platforms.associate { it.id to it.getDisplayName() }
                 val currentPlatforms = _state.value.platforms
-                val newPlatformUis = platforms.map { it.toHomePlatformUi(emulatorDetector) }
+                val downloadedCounts = gameRepository.observeDownloadedCountsByPlatform().first()
+                val newPlatformUis = platforms.map {
+                    it.toHomePlatformUi(emulatorDetector)
+                        .copy(hasInstalledGames = (downloadedCounts[it.id] ?: 0) > 0)
+                }
                 onPlatformsChanged(currentPlatforms, newPlatformUis)
                 _state.update { it.copy(platforms = newPlatformUis) }
             }
@@ -391,7 +399,11 @@ class HomeLibraryDelegate @Inject constructor(
         val allPlatforms = platformRepository.getPlatformsWithGames()
         val platforms = allPlatforms.filter { it.id != LocalPlatformIds.STEAM && it.id != LocalPlatformIds.ANDROID }
         cachedPlatformDisplayNames = allPlatforms.associate { it.id to it.getDisplayName() }
-        val platformUis = platforms.map { it.toHomePlatformUi(emulatorDetector) }
+        val downloadedCounts = gameRepository.observeDownloadedCountsByPlatform().first()
+        val platformUis = platforms.map {
+            it.toHomePlatformUi(emulatorDetector)
+                .copy(hasInstalledGames = (downloadedCounts[it.id] ?: 0) > 0)
+        }
         val androidGames = gameRepository.getByPlatformSorted(LocalPlatformIds.ANDROID, limit = PLATFORM_GAMES_LIMIT)
             .let { if (installedOnly) filterPlayable(it) else it }
         val androidGameUis = androidGames.map { it.toUi() }

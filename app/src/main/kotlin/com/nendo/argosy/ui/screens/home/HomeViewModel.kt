@@ -471,8 +471,10 @@ class HomeViewModel @Inject constructor(
                 currentBorderStyle = prefs.boxArtBorderStyle
                 gradientExtractionDelegate.updatePreferences(prefs.gradientPreset, prefs.boxArtBorderStyle)
 
-                _uiState.update {
-                    it.copy(
+                val previousRow = _uiState.value.currentRow
+
+                _uiState.update { state ->
+                    val updated = state.copy(
                         backgroundBlur = prefs.backgroundBlur,
                         backgroundSaturation = prefs.backgroundSaturation,
                         backgroundOpacity = prefs.backgroundOpacity,
@@ -482,8 +484,20 @@ class HomeViewModel @Inject constructor(
                         carouselConfig = prefs.homeLayout.carousel,
                         autoGridConfig = prefs.homeLayout.autoGrid,
                         customGridConfig = prefs.homeLayout.customGrid,
-                        layoutKind = prefs.homeLayout.selected
+                        layoutKind = prefs.homeLayout.selected,
+                        hideRecentRowHome = prefs.hideRecentRowHome,
+                        hideRecommendationsRowHome = prefs.hideRecommendationsRowHome,
+                        hideEmptyPlatformsHome = prefs.hideEmptyPlatformsHome,
+                        installedOnlyHome = prefs.installedOnlyHome
                     )
+                    if (updated.holdsCurrentRow) {
+                        updated
+                    } else {
+                        updated.copy(
+                            currentRow = updated.availableRows.firstOrNull() ?: HomeRow.Continue,
+                            focusedGameIndex = 0
+                        )
+                    }
                 }
                 customGrid.applyConfig(
                     autoFit = prefs.homeLayout.customGrid.autoFit,
@@ -495,6 +509,15 @@ class HomeViewModel @Inject constructor(
                     refreshCurrentRowInternal()
                 }
                 lastShowsEveryGame = showsEveryGame
+
+                /**
+                 * Hiding Recent, Picks, or an empty platform can knock the cursor off the row it
+                 * was on - the state update above already moved [HomeUiState.currentRow] to a row
+                 * that still exists, but only [loadRowContent] fetches what that row shows.
+                 */
+                if (_uiState.value.currentRow != previousRow) {
+                    loadRowContent(_uiState.value.currentRow)
+                }
 
                 videoPreviewDelegate.updateFromPreferences(
                     muteVideoPreview = prefs.videoWallpaperMuted,

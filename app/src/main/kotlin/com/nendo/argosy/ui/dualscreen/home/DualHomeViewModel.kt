@@ -855,7 +855,14 @@ class DualHomeViewModel(
     private fun observePlatformChanges() {
         viewModelScope.launch {
             platformRepository.observePlatformsWithGames().collect { platforms ->
-                val newPlatformSections = platformSections(platforms)
+                val prefs = preferencesRepository?.userPreferences?.first()
+                val hideEmptyPlatforms = prefs?.installedOnlyHome == true && prefs.hideEmptyPlatformsHome
+                val downloadedCounts = if (hideEmptyPlatforms) {
+                    gameRepository.observeDownloadedCountsByPlatform().first()
+                } else {
+                    null
+                }
+                val newPlatformSections = platformSections(platforms, downloadedCounts)
 
                 val state = _uiState.value
                 val leading = state.sections.filterNot {
@@ -1015,11 +1022,14 @@ class DualHomeViewModel(
      */
     private suspend fun buildSections(): List<DualHomeSection> {
         val sections = mutableListOf<DualHomeSection>()
+        val prefs = preferencesRepository?.userPreferences?.first()
 
         val newThreshold = Instant.now().minus(NEW_GAME_THRESHOLD_HOURS, ChronoUnit.HOURS)
-        val hasRecent = gameRepository.getRecentlyPlayed(limit = 1).isNotEmpty() ||
-            gameRepository.getNewlyAdded(newThreshold, isInstalledOnlyEnabled(), 1).isNotEmpty()
-        val hasRecommendations = gameRepository.getByIds(recommendedGameIds()).isNotEmpty()
+        val hasRecent = (gameRepository.getRecentlyPlayed(limit = 1).isNotEmpty() ||
+            gameRepository.getNewlyAdded(newThreshold, isInstalledOnlyEnabled(), 1).isNotEmpty()) &&
+            prefs?.hideRecentRowHome != true
+        val hasRecommendations = gameRepository.getByIds(recommendedGameIds()).isNotEmpty() &&
+            prefs?.hideRecommendationsRowHome != true
         val hasFavorites = gameRepository.getFavorites().isNotEmpty()
         val hasAndroid = gameRepository.getByPlatformSorted(LocalPlatformIds.ANDROID, limit = 1).isNotEmpty()
         val hasSteam = gameRepository.getByPlatformSorted(LocalPlatformIds.STEAM, limit = 1).isNotEmpty()
@@ -1036,7 +1046,13 @@ class DualHomeViewModel(
             section?.let { sections.add(it) }
         }
 
-        sections.addAll(platformSections(platformRepository.getPlatformsWithGames()))
+        val hideEmptyPlatforms = prefs?.installedOnlyHome == true && prefs.hideEmptyPlatformsHome
+        val downloadedCounts = if (hideEmptyPlatforms) {
+            gameRepository.observeDownloadedCountsByPlatform().first()
+        } else {
+            null
+        }
+        sections.addAll(platformSections(platformRepository.getPlatformsWithGames(), downloadedCounts))
         sections.addAll(pinnedSections())
         sections.addAll(mediaLibrarySections())
 
@@ -1056,9 +1072,13 @@ class DualHomeViewModel(
             .filter { repository.observeLibraryItems(it.libraryId).first().isNotEmpty() }
     }
 
-    private fun platformSections(platforms: List<PlatformEntity>): List<DualHomeSection.Platform> =
+    private fun platformSections(
+        platforms: List<PlatformEntity>,
+        downloadedCounts: Map<Long, Int>?
+    ): List<DualHomeSection.Platform> =
         platforms
             .filter { it.id != LocalPlatformIds.STEAM && it.id != LocalPlatformIds.ANDROID }
+            .filter { downloadedCounts == null || (downloadedCounts[it.id] ?: 0) > 0 }
             .map { platform ->
                 DualHomeSection.Platform(
                     id = platform.id,

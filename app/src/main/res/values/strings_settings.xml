@@ -449,6 +449,36 @@
     <!-- Second line of that row. -->
     <string name="settings_home_screen_installed_only_subtitle">Only show downloaded games on home screen</string>
 
+    <!-- Heading over the rows that let the top-left row switcher be pared down. Noun phrase:
+         "platform selector" is the plain-English name for that row switcher, distinct from
+         "breadcrumb", which is the internal name for the shared component
+         (ui/components/SectionBreadcrumb.kt) that renders it. -->
+    <string name="settings_home_screen_section_platform_selector">Platform Selector</string>
+
+    <!-- Row title. Verb phrase: remove one entry from the platform selector. "Recent" matches
+         the selector's own label for that entry (home_breadcrumb_continue), so the setting names
+         exactly what it removes. -->
+    <string name="settings_home_screen_hide_recent_title">Hide Recent</string>
+    <!-- Second line of that row. -->
+    <string name="settings_home_screen_hide_recent_subtitle">Remove Recent from the platform selector</string>
+
+    <!-- Row title. Verb phrase. "Picks" matches the selector's own label for that entry
+         (home_breadcrumb_recommendations). -->
+    <string name="settings_home_screen_hide_picks_title">Hide Picks</string>
+    <!-- Second line of that row. -->
+    <string name="settings_home_screen_hide_picks_subtitle">Remove Picks from the platform selector</string>
+
+    <!-- Row title. Verb phrase: remove platforms with nothing installed from the selector. -->
+    <string name="settings_home_screen_hide_empty_platforms_title">Hide Empty Platforms</string>
+    <!-- Second line of that row when the row is interactive. -->
+    <string name="settings_home_screen_hide_empty_platforms_subtitle">Remove platforms with no installed games from the platform selector</string>
+    <!-- Value shown in place of the switch while the row is locked. Distinct key from
+         settings_saves_save_sync_locked_value (different usage site) despite identical
+         English. -->
+    <string name="settings_home_screen_hide_empty_platforms_locked_value">Unavailable</string>
+    <!-- Second line while locked, naming the setting that unlocks it. -->
+    <string name="settings_home_screen_hide_empty_platforms_locked_subtitle">Requires Installed Games Only</string>
+
     <!-- ===== Saves section ===== -->
 
     <!-- Heading over the rows about copying saves to and from the server. Noun, short for

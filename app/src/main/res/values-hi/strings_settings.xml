@@ -227,6 +227,16 @@
     <string name="settings_home_screen_installed_only_title">केवल इंस्टॉल किए गए गेम</string>
     <string name="settings_home_screen_installed_only_subtitle">होम स्क्रीन पर केवल डाउनलोड किए गए गेम दिखाएँ</string>
 
+    <string name="settings_home_screen_section_platform_selector">प्लेटफ़ॉर्म चयनकर्ता</string>
+    <string name="settings_home_screen_hide_recent_title">हाल ही में छुपाएं</string>
+    <string name="settings_home_screen_hide_recent_subtitle">प्लेटफ़ॉर्म चयनकर्ता से &quot;हाल ही में&quot; हटाएं</string>
+    <string name="settings_home_screen_hide_picks_title">चुनाव छुपाएं</string>
+    <string name="settings_home_screen_hide_picks_subtitle">प्लेटफ़ॉर्म चयनकर्ता से &quot;चुनाव&quot; हटाएं</string>
+    <string name="settings_home_screen_hide_empty_platforms_title">खाली प्लेटफ़ॉर्म छुपाएं</string>
+    <string name="settings_home_screen_hide_empty_platforms_subtitle">बिना इंस्टॉल किए गेम वाले प्लेटफ़ॉर्म चयनकर्ता से हटाएं</string>
+    <string name="settings_home_screen_hide_empty_platforms_locked_value">अनुपलब्ध</string>
+    <string name="settings_home_screen_hide_empty_platforms_locked_subtitle">&quot;केवल इंस्टॉल किए गए गेम&quot; आवश्यक है</string>
+
     <!-- ===== Saves section ===== -->
 
     <string name="settings_saves_section_sync">सिंक</string>

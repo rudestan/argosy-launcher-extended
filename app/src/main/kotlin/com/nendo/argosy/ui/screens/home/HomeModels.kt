@@ -177,7 +177,14 @@ data class HomePlatformUi(
     val shortName: String,
     val displayName: String,
     val logoPath: String?,
-    val hasEmulator: Boolean = true
+    val hasEmulator: Boolean = true,
+    /**
+     * Whether this platform has at least one downloaded game. Populated only where the platform
+     * selector's "hide empty platforms" filter is consulted (HomeLibraryDelegate); other readers
+     * of [HomePlatformUi], such as the Library screen, leave it at the default and never look at
+     * it, so an unpopulated `true` here is always safe rather than wrongly hiding something.
+     */
+    val hasInstalledGames: Boolean = true
 )
 
 fun PlatformEntity.toHomePlatformUi(emulatorDetector: EmulatorDetector) = HomePlatformUi(
@@ -293,7 +300,11 @@ data class HomeUiState(
     val isVideoPreviewLoading: Boolean = false,
     val muteVideoPreview: Boolean = false,
     val videoWallpaperEnabled: Boolean = false,
-    val videoWallpaperDelayMs: Long = 3000L
+    val videoWallpaperDelayMs: Long = 3000L,
+    val hideRecentRowHome: Boolean = false,
+    val hideRecommendationsRowHome: Boolean = false,
+    val hideEmptyPlatformsHome: Boolean = false,
+    val installedOnlyHome: Boolean = false
 ) {
     /**
      * The rows on offer, in the order [HomeSectionKind] declares them: the fixed opening run, then
@@ -308,9 +319,10 @@ data class HomeUiState(
         }
 
     private fun fixedRow(kind: HomeSectionKind): HomeRow? = when (kind) {
-        HomeSectionKind.CONTINUE -> HomeRow.Continue.takeIf { recentGames.isNotEmpty() }
+        HomeSectionKind.CONTINUE ->
+            HomeRow.Continue.takeIf { recentGames.isNotEmpty() && !hideRecentRowHome }
         HomeSectionKind.RECOMMENDATIONS ->
-            HomeRow.Recommendations.takeIf { recommendedGames.isNotEmpty() }
+            HomeRow.Recommendations.takeIf { recommendedGames.isNotEmpty() && !hideRecommendationsRowHome }
         HomeSectionKind.FAVORITES -> HomeRow.Favorites.takeIf { hasFavorites }
         HomeSectionKind.ANDROID -> HomeRow.Android.takeIf { androidGames.isNotEmpty() }
         HomeSectionKind.STEAM -> HomeRow.Steam.takeIf { steamGames.isNotEmpty() }
@@ -328,7 +340,9 @@ data class HomeUiState(
      * each kind separately would split a hand-ordered set of pins into two blocks.
      */
     private fun repeatingRows(kind: HomeSectionKind): List<HomeRow> = when (kind) {
-        HomeSectionKind.PLATFORM -> platforms.indices.map { HomeRow.Platform(it) }
+        HomeSectionKind.PLATFORM -> platforms.indices
+            .filter { showsEmptyPlatform(platforms[it]) }
+            .map { HomeRow.Platform(it) }
         HomeSectionKind.PINNED_REGULAR -> pinnedRows
         HomeSectionKind.PINNED_VIRTUAL -> emptyList()
         HomeSectionKind.MEDIA_LIBRARY ->
@@ -339,6 +353,16 @@ data class HomeUiState(
             }
         else -> emptyList()
     }
+
+    /**
+     * Whether [platform] earns a slot in the platform selector.
+     *
+     * "Empty" here means "nothing installed", which only matters once Installed Games Only is
+     * itself on - otherwise the row still lists everything the platform owns, so hiding it for
+     * having nothing installed would hide a platform that plainly has games.
+     */
+    private fun showsEmptyPlatform(platform: HomePlatformUi): Boolean =
+        !(installedOnlyHome && hideEmptyPlatformsHome && !platform.hasInstalledGames)
 
     private val pinnedRows: List<HomeRow>
         get() = pinnedCollections.sortedByDescending { it.displayOrder }.map { pinned ->
@@ -415,14 +439,14 @@ data class HomeUiState(
             }
             is HomeRow.Platform -> platformItems
             HomeRow.Continue -> when {
-                recentGames.isEmpty() -> emptyList()
+                hideRecentRowHome || recentGames.isEmpty() -> emptyList()
                 layoutKind == com.nendo.argosy.domain.model.HomeLayoutKind.CAROUSEL ->
                     recentGames.take(CAROUSEL_RECENT_LIMIT).map { HomeRowItem.Game(it) } +
                         HomeRowItem.ViewAll(sourceFilter = "PLAYABLE")
                 else -> recentGames.map { HomeRowItem.Game(it) }
             }
             HomeRow.Recommendations -> {
-                if (recommendedGames.isEmpty()) emptyList()
+                if (hideRecommendationsRowHome || recommendedGames.isEmpty()) emptyList()
                 else recommendedGames.map { HomeRowItem.Game(it) }
             }
             HomeRow.Android -> {

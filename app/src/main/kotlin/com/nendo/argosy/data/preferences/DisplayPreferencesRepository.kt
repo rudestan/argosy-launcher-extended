@@ -102,7 +102,10 @@ data class DisplayPreferences(
     val dualScreenEnabled: Boolean = false,
     val displayRoleOverride: DisplayRoleOverride = DisplayRoleOverride.AUTO,
     val dualScreenInputFocus: DualScreenInputFocus = DualScreenInputFocus.AUTO,
-    val installedOnlyHome: Boolean = false
+    val installedOnlyHome: Boolean = false,
+    val hideRecentRowHome: Boolean = false,
+    val hideRecommendationsRowHome: Boolean = false,
+    val hideEmptyPlatformsHome: Boolean = false
 )
 
 @Singleton
@@ -193,6 +196,9 @@ class DisplayPreferencesRepository @Inject constructor(
         val DISPLAY_ROLE_OVERRIDE = stringPreferencesKey("display_role_override")
         val DUAL_SCREEN_INPUT_FOCUS = stringPreferencesKey("dual_screen_input_focus")
         val INSTALLED_ONLY_HOME = booleanPreferencesKey("installed_only_home")
+        val HIDE_RECENT_ROW_HOME = booleanPreferencesKey("hide_recent_row_home")
+        val HIDE_RECOMMENDATIONS_ROW_HOME = booleanPreferencesKey("hide_recommendations_row_home")
+        val HIDE_EMPTY_PLATFORMS_HOME = booleanPreferencesKey("hide_empty_platforms_home")
     }
 
     val preferences: Flow<DisplayPreferences> = dataStore.data.map { prefs ->
@@ -285,7 +291,10 @@ class DisplayPreferencesRepository @Inject constructor(
             dualScreenEnabled = prefs[Keys.DUAL_SCREEN_ENABLED] ?: DisplayAffinityHelper.isKnownDualScreenDevice(),
             displayRoleOverride = DisplayRoleOverride.fromString(prefs[Keys.DISPLAY_ROLE_OVERRIDE]),
             dualScreenInputFocus = DualScreenInputFocus.fromString(prefs[Keys.DUAL_SCREEN_INPUT_FOCUS]),
-            installedOnlyHome = prefs[Keys.INSTALLED_ONLY_HOME] ?: false
+            installedOnlyHome = prefs[Keys.INSTALLED_ONLY_HOME] ?: false,
+            hideRecentRowHome = prefs[Keys.HIDE_RECENT_ROW_HOME] ?: false,
+            hideRecommendationsRowHome = prefs[Keys.HIDE_RECOMMENDATIONS_ROW_HOME] ?: false,
+            hideEmptyPlatformsHome = prefs[Keys.HIDE_EMPTY_PLATFORMS_HOME] ?: false
         )
     }
 
@@ -631,6 +640,18 @@ class DisplayPreferencesRepository @Inject constructor(
 
     suspend fun setInstalledOnlyHome(enabled: Boolean) {
         dataStore.edit { it[Keys.INSTALLED_ONLY_HOME] = enabled }
+    }
+
+    suspend fun setHideRecentRowHome(enabled: Boolean) {
+        dataStore.edit { it[Keys.HIDE_RECENT_ROW_HOME] = enabled }
+    }
+
+    suspend fun setHideRecommendationsRowHome(enabled: Boolean) {
+        dataStore.edit { it[Keys.HIDE_RECOMMENDATIONS_ROW_HOME] = enabled }
+    }
+
+    suspend fun setHideEmptyPlatformsHome(enabled: Boolean) {
+        dataStore.edit { it[Keys.HIDE_EMPTY_PLATFORMS_HOME] = enabled }
     }
 
     /**

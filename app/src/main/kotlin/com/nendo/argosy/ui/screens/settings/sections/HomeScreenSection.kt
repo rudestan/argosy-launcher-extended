@@ -27,6 +27,7 @@ import com.nendo.argosy.ui.components.HomeLayoutPreview
 import com.nendo.argosy.ui.components.HomeLayoutSelectorRow
 import com.nendo.argosy.ui.components.HomeLayoutSettingField
 import com.nendo.argosy.ui.components.HomeLayoutSettingRow
+import com.nendo.argosy.ui.components.InfoPreference
 import com.nendo.argosy.ui.components.adjustHomeLayoutField
 import com.nendo.argosy.ui.components.homeLayoutFieldsFor
 import com.nendo.argosy.ui.components.homeRailFields
@@ -39,6 +40,7 @@ import com.nendo.argosy.ui.screens.settings.SettingsUiState
 import com.nendo.argosy.ui.screens.settings.SettingsViewModel
 import com.nendo.argosy.ui.screens.settings.delegates.DisplaySettingsDelegate
 import com.nendo.argosy.ui.screens.settings.menu.SettingsLayout
+import com.nendo.argosy.ui.screens.settings.menu.DisabledBehavior
 import com.nendo.argosy.ui.theme.Dimens
 import com.nendo.argosy.ui.theme.generated.ComponentDefaults
 
@@ -114,6 +116,29 @@ internal sealed class HomeScreenItem(
         visibleWhen = { it.homeLayout.selected != HomeLayoutKind.CUSTOM_GRID }
     )
 
+    data object HideRecent : HomeScreenItem(
+        key = "hideRecentRowHome",
+        section = "content",
+        visibleWhen = { it.homeLayout.selected != HomeLayoutKind.CUSTOM_GRID }
+    )
+
+    data object HidePicks : HomeScreenItem(
+        key = "hideRecommendationsRowHome",
+        section = "content",
+        visibleWhen = { it.homeLayout.selected != HomeLayoutKind.CUSTOM_GRID }
+    )
+
+    /**
+     * Locked to [DisabledBehavior.LOCKED] until [DisplayState.installedOnlyHome] is on - hiding a
+     * platform for having nothing installed is meaningless while the row still lists everything a
+     * platform owns, installed or not.
+     */
+    data object HideEmptyPlatforms : HomeScreenItem(
+        key = "hideEmptyPlatformsHome",
+        section = "content",
+        visibleWhen = { it.homeLayout.selected != HomeLayoutKind.CUSTOM_GRID }
+    )
+
     companion object {
         /**
          * Mirrors the home screen's own `showArtLayer`: with the theme backdrop off the art layer
@@ -138,6 +163,11 @@ internal sealed class HomeScreenItem(
         private val LayoutHeader = Header("layoutHeader", "layout", R.string.settings_home_screen_section_layout)
         private val ContentHeader =
             Header("contentHeader", "content", R.string.settings_home_screen_section_content)
+        private val PlatformSelectorHeaderRow = Header(
+            "platformSelectorHeaderRow",
+            "content",
+            R.string.settings_home_screen_section_platform_selector
+        )
 
         val ALL: List<HomeScreenItem>
             get() = listOf(
@@ -151,6 +181,8 @@ internal sealed class HomeScreenItem(
                     .toTypedArray(),
                 ContentHeader,
                 InstalledOnly,
+                PlatformSelectorHeaderRow,
+                HideRecent, HidePicks, HideEmptyPlatforms,
                 *homeRailFields().map { LayoutField(it) }.toTypedArray(),
                 BackgroundHeader,
                 Background, GameArtwork, CustomImage, Blur, Saturation, Opacity,
@@ -160,10 +192,23 @@ internal sealed class HomeScreenItem(
     }
 }
 
-private val homeScreenLayout = SettingsLayout<HomeScreenItem, DisplayState>(
+/**
+ * Built fresh per call, closing over [display], so [HideEmptyPlatforms] can be locked while
+ * [DisplayState.installedOnlyHome] is off - the same shape as `createSavesLayout`.
+ */
+private fun homeScreenLayout(display: DisplayState) = SettingsLayout<HomeScreenItem, DisplayState>(
     allItems = HomeScreenItem.ALL,
-    isFocusable = { it.isFocusable },
+    isFocusable = {
+        it.isFocusable && !(it is HomeScreenItem.HideEmptyPlatforms && !display.installedOnlyHome)
+    },
     visibleWhen = { item, state -> item.visibleWhen(state) },
+    disabledBehavior = {
+        if (it is HomeScreenItem.HideEmptyPlatforms && !display.installedOnlyHome) {
+            DisabledBehavior.LOCKED
+        } else {
+            DisabledBehavior.HIDDEN
+        }
+    },
     sectionOf = { it.section },
     sectionTitleRes = {
         when (it) {
@@ -181,15 +226,15 @@ private fun homeBackgroundModeLabelRes(mode: HomeBackgroundMode): Int = when (mo
     HomeBackgroundMode.PATTERN -> R.string.settings_home_screen_background_mode_pattern
 }
 
-internal fun homeScreenMaxFocusIndex(display: DisplayState): Int = homeScreenLayout.maxFocusIndex(display)
+internal fun homeScreenMaxFocusIndex(display: DisplayState): Int = homeScreenLayout(display).maxFocusIndex(display)
 
-internal fun homeScreenSections(display: DisplayState) = homeScreenLayout.buildSections(display)
+internal fun homeScreenSections(display: DisplayState) = homeScreenLayout(display).buildSections(display)
 
 internal fun homeScreenItemAtFocusIndex(index: Int, display: DisplayState): HomeScreenItem? =
-    homeScreenLayout.itemAtFocusIndex(index, display)
+    homeScreenLayout(display).itemAtFocusIndex(index, display)
 
 internal fun homeScreenFocusIndexOf(item: HomeScreenItem, display: DisplayState): Int =
-    homeScreenLayout.focusIndexOf(item, display)
+    homeScreenLayout(display).focusIndexOf(item, display)
 
 @Composable
 fun HomeScreenSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
@@ -201,9 +246,10 @@ fun HomeScreenSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
         display.videoWallpaperEnabled,
         display.surfaceBackdrop.enabled,
         display.homeBackgroundMode,
-        display.homeLayout.selected
+        display.homeLayout.selected,
+        display.installedOnlyHome
     ) {
-        homeScreenLayout.visibleItems(display)
+        homeScreenLayout(display).visibleItems(display)
     }
     val sections = remember(
         display.useGameBackground,
@@ -211,13 +257,14 @@ fun HomeScreenSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
         display.surfaceBackdrop.enabled,
         display.homeBackgroundMode,
         display.homeLayout.selected,
+        display.installedOnlyHome,
         context
     ) {
-        homeScreenLayout.buildSections(display, context)
+        homeScreenLayout(display).buildSections(display, context)
     }
 
     fun isFocused(item: HomeScreenItem): Boolean =
-        uiState.focusedIndex == homeScreenLayout.focusIndexOf(item, display)
+        uiState.focusedIndex == homeScreenLayout(display).focusIndexOf(item, display)
 
     fun pickerToken(item: HomeScreenItem): Int =
         if (uiState.enumPickerKey == item.key) uiState.enumPickerToken else 0
@@ -226,7 +273,7 @@ fun HomeScreenSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
         items = visibleItems,
         sections = sections,
         focusedIndex = uiState.focusedIndex,
-        focusToListIndex = { homeScreenLayout.focusToListIndex(it, display) },
+        focusToListIndex = { homeScreenLayout(display).focusToListIndex(it, display) },
         itemKey = { it.key },
         isNavItem = { false },
         isHeader = { it is HomeScreenItem.Header },
@@ -385,6 +432,39 @@ fun HomeScreenSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
                     isFocused = isFocused(item),
                     onToggle = { viewModel.setInstalledOnlyHome(it) }
                 )
+
+                HomeScreenItem.HideRecent -> SwitchPreference(
+                    title = stringResource(R.string.settings_home_screen_hide_recent_title),
+                    subtitle = stringResource(R.string.settings_home_screen_hide_recent_subtitle),
+                    isEnabled = display.hideRecentRowHome,
+                    isFocused = isFocused(item),
+                    onToggle = { viewModel.setHideRecentRowHome(it) }
+                )
+
+                HomeScreenItem.HidePicks -> SwitchPreference(
+                    title = stringResource(R.string.settings_home_screen_hide_picks_title),
+                    subtitle = stringResource(R.string.settings_home_screen_hide_picks_subtitle),
+                    isEnabled = display.hideRecommendationsRowHome,
+                    isFocused = isFocused(item),
+                    onToggle = { viewModel.setHideRecommendationsRowHome(it) }
+                )
+
+                HomeScreenItem.HideEmptyPlatforms -> if (display.installedOnlyHome) {
+                    SwitchPreference(
+                        title = stringResource(R.string.settings_home_screen_hide_empty_platforms_title),
+                        subtitle = stringResource(R.string.settings_home_screen_hide_empty_platforms_subtitle),
+                        isEnabled = display.hideEmptyPlatformsHome,
+                        isFocused = isFocused(item),
+                        onToggle = { viewModel.setHideEmptyPlatformsHome(it) }
+                    )
+                } else {
+                    InfoPreference(
+                        title = stringResource(R.string.settings_home_screen_hide_empty_platforms_title),
+                        value = stringResource(R.string.settings_home_screen_hide_empty_platforms_locked_value),
+                        subtitle = stringResource(R.string.settings_home_screen_hide_empty_platforms_locked_subtitle),
+                        isFocused = false
+                    )
+                }
             }
     }
 }
