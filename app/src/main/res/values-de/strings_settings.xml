@@ -237,6 +237,16 @@
     <string name="settings_home_screen_installed_only_title">Nur installierte Spiele</string>
     <string name="settings_home_screen_installed_only_subtitle">Nur heruntergeladene Spiele auf dem Startbildschirm anzeigen</string>
 
+    <string name="settings_home_screen_section_platform_selector">Plattformauswahl</string>
+    <string name="settings_home_screen_hide_recent_title">Zuletzt gespielt ausblenden</string>
+    <string name="settings_home_screen_hide_recent_subtitle">&quot;Zuletzt gespielt&quot; aus der Plattformauswahl entfernen</string>
+    <string name="settings_home_screen_hide_picks_title">Auswahl ausblenden</string>
+    <string name="settings_home_screen_hide_picks_subtitle">&quot;Auswahl&quot; aus der Plattformauswahl entfernen</string>
+    <string name="settings_home_screen_hide_empty_platforms_title">Leere Plattformen ausblenden</string>
+    <string name="settings_home_screen_hide_empty_platforms_subtitle">Plattformen ohne installierte Spiele aus der Plattformauswahl entfernen</string>
+    <string name="settings_home_screen_hide_empty_platforms_locked_value">Nicht verfügbar</string>
+    <string name="settings_home_screen_hide_empty_platforms_locked_subtitle">Erfordert &quot;Nur installierte Spiele&quot;</string>
+
     <!-- ===== Saves section ===== -->
 
     <string name="settings_saves_section_sync">SYNC</string>

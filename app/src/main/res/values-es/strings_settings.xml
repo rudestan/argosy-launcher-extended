@@ -242,6 +242,16 @@
     <string name="settings_home_screen_installed_only_title">Solo juegos instalados</string>
     <string name="settings_home_screen_installed_only_subtitle">Mostrar solo los juegos descargados en la pantalla de inicio</string>
 
+    <string name="settings_home_screen_section_platform_selector">Selector de plataforma</string>
+    <string name="settings_home_screen_hide_recent_title">Ocultar Recientes</string>
+    <string name="settings_home_screen_hide_recent_subtitle">Quitar Recientes del selector de plataforma</string>
+    <string name="settings_home_screen_hide_picks_title">Ocultar Selección</string>
+    <string name="settings_home_screen_hide_picks_subtitle">Quitar Selección del selector de plataforma</string>
+    <string name="settings_home_screen_hide_empty_platforms_title">Ocultar plataformas vacías</string>
+    <string name="settings_home_screen_hide_empty_platforms_subtitle">Quitar del selector las plataformas sin juegos instalados</string>
+    <string name="settings_home_screen_hide_empty_platforms_locked_value">No disponible</string>
+    <string name="settings_home_screen_hide_empty_platforms_locked_subtitle">Requiere &quot;Solo juegos instalados&quot;</string>
+
     <!-- ===== Saves section ===== -->
 
     <string name="settings_saves_section_sync">SINCRONIZACIÓN</string>

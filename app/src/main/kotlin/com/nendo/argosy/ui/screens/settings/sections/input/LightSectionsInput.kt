@@ -189,6 +189,16 @@ internal class LightSectionsInput(
                 return toggleLeftRight(direction, display.videoWallpaperMuted) { viewModel.setVideoWallpaperMuted(it) }
             HomeScreenItem.InstalledOnly ->
                 return toggleLeftRight(direction, display.installedOnlyHome) { viewModel.setInstalledOnlyHome(it) }
+            HomeScreenItem.HideRecent ->
+                return toggleLeftRight(direction, display.hideRecentRowHome) { viewModel.setHideRecentRowHome(it) }
+            HomeScreenItem.HidePicks ->
+                return toggleLeftRight(direction, display.hideRecommendationsRowHome) {
+                    viewModel.setHideRecommendationsRowHome(it)
+                }
+            HomeScreenItem.HideEmptyPlatforms ->
+                return toggleLeftRight(direction, display.hideEmptyPlatformsHome) {
+                    viewModel.setHideEmptyPlatformsHome(it)
+                }
             HomeScreenItem.LayoutSelector -> {
                 val kinds = HomeLayoutKind.entries
                 val next = kinds[(kinds.indexOf(display.homeLayout.selected) + direction).mod(kinds.size)]

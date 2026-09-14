@@ -564,7 +564,10 @@ internal fun routeLoadSettings(vm: SettingsViewModel) {
             hasPhysicalSecondaryDisplay = vm.displayAffinityHelper.hasPhysicalSecondaryDisplay,
             dualScreenEnabled = prefs.dualScreenEnabled,
             displayRoleOverride = prefs.displayRoleOverride,
-            installedOnlyHome = prefs.installedOnlyHome
+            installedOnlyHome = prefs.installedOnlyHome,
+            hideRecentRowHome = prefs.hideRecentRowHome,
+            hideRecommendationsRowHome = prefs.hideRecommendationsRowHome,
+            hideEmptyPlatformsHome = prefs.hideEmptyPlatformsHome
         ))
 
         val detectionResult = ControllerDetector.detectFromActiveGamepad()

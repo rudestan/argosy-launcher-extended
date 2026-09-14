@@ -157,33 +157,46 @@ fun SectionBreadcrumb(
                     }
                     .padding(vertical = Dimens.spacingXs)
             ) {
-                LazyRow(
-                    state = breadcrumbListState,
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.spacingXs),
-                    contentPadding = PaddingValues(horizontal = 0.dp),
-                    userScrollEnabled = false
-                ) {
-                    items(virtualSize) { virtualIndex ->
-                        val realIndex = virtualIndex.mod(labels.size)
-                        if (virtualIndex > 0) {
-                            Text(
-                                text = "·",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                                modifier = Modifier.padding(end = Dimens.spacingXs)
-                            )
-                        }
+                if (labels.size <= 1) {
+                    labels.firstOrNull()?.let { label ->
                         Text(
-                            text = labels[realIndex],
-                            style = if (virtualIndex == virtualPosition) MaterialTheme.typography.titleMedium
-                                    else MaterialTheme.typography.labelMedium,
-                            color = if (virtualIndex == virtualPosition) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f),
+                            text = label,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
-                                .clickableNoFocus { onSelect(realIndex) }
+                                .clickableNoFocus { onSelect(0) }
                                 .padding(horizontal = Dimens.spacingXs)
                         )
+                    }
+                } else {
+                    LazyRow(
+                        state = breadcrumbListState,
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.spacingXs),
+                        contentPadding = PaddingValues(horizontal = 0.dp),
+                        userScrollEnabled = false
+                    ) {
+                        items(virtualSize) { virtualIndex ->
+                            val realIndex = virtualIndex.mod(labels.size)
+                            if (virtualIndex > 0) {
+                                Text(
+                                    text = "·",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                                    modifier = Modifier.padding(end = Dimens.spacingXs)
+                                )
+                            }
+                            Text(
+                                text = labels[realIndex],
+                                style = if (virtualIndex == virtualPosition) MaterialTheme.typography.titleMedium
+                                        else MaterialTheme.typography.labelMedium,
+                                color = if (virtualIndex == virtualPosition) MaterialTheme.colorScheme.primary
+                                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f),
+                                modifier = Modifier
+                                    .clickableNoFocus { onSelect(realIndex) }
+                                    .padding(horizontal = Dimens.spacingXs)
+                            )
+                        }
                     }
                 }
             }

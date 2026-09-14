@@ -205,6 +205,16 @@
     <string name="settings_home_screen_installed_only_title">僅限已安裝的遊戲</string>
     <string name="settings_home_screen_installed_only_subtitle">主畫面僅顯示已下載的遊戲</string>
 
+    <string name="settings_home_screen_section_platform_selector">平台選擇器</string>
+    <string name="settings_home_screen_hide_recent_title">隱藏「最近」</string>
+    <string name="settings_home_screen_hide_recent_subtitle">從平台選擇器中移除「最近」</string>
+    <string name="settings_home_screen_hide_picks_title">隱藏「精選」</string>
+    <string name="settings_home_screen_hide_picks_subtitle">從平台選擇器中移除「精選」</string>
+    <string name="settings_home_screen_hide_empty_platforms_title">隱藏空平台</string>
+    <string name="settings_home_screen_hide_empty_platforms_subtitle">從平台選擇器中移除沒有已安裝遊戲的平台</string>
+    <string name="settings_home_screen_hide_empty_platforms_locked_value">無法使用</string>
+    <string name="settings_home_screen_hide_empty_platforms_locked_subtitle">需要開啟「僅顯示已安裝的遊戲」</string>
+
     <string name="settings_saves_section_sync">同步</string>
     <string name="settings_saves_section_manage">管理</string>
 
