@@ -20,6 +20,7 @@ data class InstalledApp(
     val packageName: String,
     val label: String,
     val isSystemApp: Boolean,
+    val isArgosy: Boolean = false,
     val declaresGameCategory: Boolean = false
 )
 
@@ -85,12 +86,13 @@ class AppsRepository @Inject constructor(
                 InstalledApp(
                     packageName = appInfo.packageName,
                     label = resolveInfo.loadLabel(packageManager).toString(),
-                    isSystemApp = isSystem || isArgosy(appInfo.packageName),
+                    isSystemApp = isSystem,
+                    isArgosy = isArgosy(appInfo.packageName),
                     declaresGameCategory = appInfo.declaresGameCategory()
                 )
             }
             .distinctBy { it.packageName }
-            .filter { includeSystemApps || !it.isSystemApp }
+            .filter { includeSystemApps || (!it.isSystemApp && !it.isArgosy) }
             .sortedBy { it.label.lowercase() }
             .toList()
     }

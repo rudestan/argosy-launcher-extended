@@ -110,6 +110,9 @@
         <item quantity="other">%d個篩選條件</item>
     </plurals>
     <string name="library_apps_empty">找不到應用程式</string>
+    <string name="library_apps_tab_installed">已安裝</string>
+    <string name="library_apps_tab_system">系統</string>
+    <string name="library_apps_hint_tab">分頁</string>
 
     <string name="library_apps_hint_move">移動</string>
     <string name="library_apps_hint_save">儲存</string>

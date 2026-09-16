@@ -110,6 +110,9 @@
         <item quantity="other">%d个筛选条件</item>
     </plurals>
     <string name="library_apps_empty">未找到应用</string>
+    <string name="library_apps_tab_installed">已安装</string>
+    <string name="library_apps_tab_system">系统</string>
+    <string name="library_apps_hint_tab">标签</string>
 
     <string name="library_apps_hint_move">移动</string>
     <string name="library_apps_hint_save">保存</string>

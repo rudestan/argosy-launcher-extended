@@ -273,6 +273,13 @@
     </plurals>
     <!-- Shown in place of the app grid when no installed app matches the current view. -->
     <string name="library_apps_empty">No apps found</string>
+    <!-- Tab on the apps screen listing the user-installed apps. Noun, plural. -->
+    <string name="library_apps_tab_installed">Installed</string>
+    <!-- Tab on the apps screen listing the apps that ship with the device. Noun, plural. -->
+    <string name="library_apps_tab_system">System</string>
+    <!-- Button hint on the apps screen. Noun: the shoulder buttons move between the Installed
+         and System tabs. -->
+    <string name="library_apps_hint_tab">Tab</string>
 
     <!-- Button hint on the apps screen while reordering. Verb, moves the held app one place. -->
     <string name="library_apps_hint_move">Move</string>

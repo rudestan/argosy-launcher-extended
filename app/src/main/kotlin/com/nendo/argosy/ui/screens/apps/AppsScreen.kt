@@ -3,6 +3,7 @@ package com.nendo.argosy.ui.screens.apps
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -212,6 +213,14 @@ fun AppsScreen(
                 }
             }
 
+            if (!uiState.isReorderMode) {
+                AppsTabBar(
+                    selectedTab = uiState.selectedTab,
+                    onSelectTab = { viewModel.selectTab(it) },
+                    modifier = Modifier.padding(horizontal = Dimens.spacingLg, vertical = Dimens.spacingSm)
+                )
+            }
+
             when {
                 uiState.isLoading -> {
                     Box(
@@ -275,6 +284,7 @@ fun AppsScreen(
                         InputButton.B to stringResource(R.string.library_apps_hint_cancel)
                     )
                     else -> listOf(
+                        InputButton.LB_RB to stringResource(R.string.library_apps_hint_tab),
                         InputButton.A to stringResource(R.string.library_apps_hint_open),
                         InputButton.B to stringResource(R.string.library_apps_hint_back),
                         InputButton.Y to if (uiState.hasSecondaryDisplay) {
@@ -362,6 +372,47 @@ fun AppsScreen(
         }
     }
 }
+
+@Composable
+private fun AppsTabBar(
+    selectedTab: AppsTab,
+    onSelectTab: (AppsTab) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val theme = LocalArgosyTheme.current
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spacingSm),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AppsTab.entries.forEach { tab ->
+            val selected = tab == selectedTab
+            val shape = RoundedCornerShape(Dimens.radiusPill)
+            Box(
+                modifier = Modifier
+                    .clip(shape)
+                    .background(if (selected) theme.surfaceRaised else theme.surfaceBase, shape)
+                    .clickableNoFocus { onSelectTab(tab) }
+                    .padding(horizontal = Dimens.spacingLg, vertical = Dimens.spacingSm),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(tab.labelRes),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = if (selected) theme.textPrimary else theme.textDim,
+                    maxLines = 1
+                )
+            }
+        }
+    }
+}
+
+@get:StringRes
+private val AppsTab.labelRes: Int
+    get() = when (this) {
+        AppsTab.INSTALLED -> R.string.library_apps_tab_installed
+        AppsTab.SYSTEM -> R.string.library_apps_tab_system
+    }
 
 @Composable
 private fun ContextMenuItem(
