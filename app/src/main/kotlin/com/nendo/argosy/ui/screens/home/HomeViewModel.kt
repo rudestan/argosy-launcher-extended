@@ -1659,6 +1659,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    override fun openApps() {
+        viewModelScope.launch {
+            _events.emit(HomeEvent.NavigateToApps)
+        }
+    }
+
     override fun setNavigationContext(gameIds: List<Long>) {
         gameNavigationContext.setContext(gameIds)
     }

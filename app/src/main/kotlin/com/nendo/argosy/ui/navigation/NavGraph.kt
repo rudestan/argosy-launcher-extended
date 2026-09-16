@@ -89,6 +89,11 @@ fun NavGraph(
                 onNavigateToSettings = { section ->
                     navController.navigate(Screen.Settings.createRoute(section))
                 },
+                onNavigateToApps = {
+                    navController.navigate(Screen.Apps.route) {
+                        launchSingleTop = true
+                    }
+                },
                 onPlayMedia = onPlayMedia,
                 onMediaSelect = { itemId ->
                     navController.navigate(Screen.MediaDetail.createRoute(itemId))

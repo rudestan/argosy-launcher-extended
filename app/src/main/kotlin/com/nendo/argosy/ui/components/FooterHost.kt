@@ -25,6 +25,7 @@ data class FooterEntry(
     val variant: FooterVariant,
     val onHintClick: ((InputButton) -> Unit)?,
     val trailingContent: (@Composable () -> Unit)?,
+    val centerContent: (@Composable () -> Unit)? = null,
     val forced: Boolean = false
 )
 
@@ -56,6 +57,7 @@ fun FooterHints(
     variant: FooterVariant = FooterVariant.STANDARD,
     onHintClick: ((InputButton) -> Unit)? = null,
     trailingContent: (@Composable () -> Unit)? = null,
+    centerContent: (@Composable () -> Unit)? = null,
     forced: Boolean = false
 ) {
     FooterHintsWithState(
@@ -63,6 +65,7 @@ fun FooterHints(
         variant = variant,
         onHintClick = onHintClick,
         trailingContent = trailingContent,
+        centerContent = centerContent,
         forced = forced
     )
 }
@@ -74,12 +77,13 @@ fun FooterHintsWithState(
     variant: FooterVariant = FooterVariant.STANDARD,
     onHintClick: ((InputButton) -> Unit)? = null,
     trailingContent: (@Composable () -> Unit)? = null,
+    centerContent: (@Composable () -> Unit)? = null,
     forced: Boolean = false
 ) {
     val controller = LocalFooterHost.current
     val style = LocalFooterStyle.current
     val id = remember(controller) { controller.allocateId() }
-    val entry = FooterEntry(hints, style, variant, onHintClick, trailingContent, forced)
+    val entry = FooterEntry(hints, style, variant, onHintClick, trailingContent, centerContent, forced)
     SideEffect { controller.set(id, entry) }
     DisposableEffect(controller, id) {
         onDispose { controller.remove(id) }
@@ -98,13 +102,15 @@ fun FooterHost(
             FooterVariant.SUBTLE -> SubtleFooterBar(
                 hints = entry.hints.map { it.button to it.action },
                 modifier = modifier,
-                onHintClick = entry.onHintClick
+                onHintClick = entry.onHintClick,
+                centerContent = entry.centerContent
             )
             else -> FooterBarWithState(
                 hints = entry?.hints ?: emptyList(),
                 modifier = modifier,
                 onHintClick = entry?.onHintClick,
                 trailingContent = entry?.trailingContent,
+                centerContent = entry?.centerContent,
                 forceVisible = entry?.forced == true
             )
         }
@@ -113,7 +119,7 @@ fun FooterHost(
 
 val FooterHostController.isBarVisible: Boolean
     get() = top?.let { entry ->
-        entry.forced || entry.hints.any { !isObviousHint(it.button) }
+        entry.forced || entry.centerContent != null || entry.hints.any { !isObviousHint(it.button) }
     } == true
 
 /** Reserves footer space only while the singleton bar is actually showing. */

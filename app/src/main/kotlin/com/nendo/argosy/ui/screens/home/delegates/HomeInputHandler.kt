@@ -102,6 +102,7 @@ interface HomeInputActions {
     fun queueDownload(gameId: Long)
     fun queueSteamDownload(gameId: Long)
     fun navigateToLibrary(platformId: Long?, sourceFilter: String?)
+    fun openApps()
     fun toggleFavorite(gameId: Long)
     fun unfavoriteMedia(itemId: String)
     fun setNavigationContext(gameIds: List<Long>)
@@ -617,9 +618,18 @@ class HomeInputHandler(
     override fun onPrevTrigger(): InputResult {
         val state = actions.uiState.value
         if (state.customGrid.mediaSetup != null || state.customGrid.featureSetup != null) return InputResult.HANDLED
-        if (!state.showTilePicker) return InputResult.UNHANDLED
-        actions.jumpTilePickerLetter(false)
-        return InputResult.handled(SoundType.SECTION_CHANGE)
+        if (state.showTilePicker) {
+            actions.jumpTilePickerLetter(false)
+            return InputResult.handled(SoundType.SECTION_CHANGE)
+        }
+        if (state.showGameMenu || state.showAddToCollectionModal) return InputResult.HANDLED
+        if (state.customGrid.pendingAdd != null || state.customGrid.mediaTileNotice != null ||
+            state.customGrid.showMenu || state.customGrid.pageChooser != null
+        ) {
+            return InputResult.HANDLED
+        }
+        actions.openApps()
+        return InputResult.handled(SoundType.SELECT)
     }
 
     override fun onNextTrigger(): InputResult {

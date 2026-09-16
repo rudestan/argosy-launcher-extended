@@ -646,6 +646,7 @@
     <string name="ui_quick_menu_orb_top_unplayed">Por descubrir</string>
     <string name="ui_quick_menu_orb_recent">Recientes</string>
     <string name="ui_quick_menu_orb_favorites">Favoritos</string>
+    <string name="ui_quick_menu_orb_apps">Aplicaciones</string>
     <string name="ui_quick_menu_empty_most_played">Aún no has jugado ningún juego</string>
     <string name="ui_quick_menu_empty_top_unplayed">No se encontraron juegos calificados</string>
     <string name="ui_quick_menu_empty_recent">No hay juegos recientes</string>

@@ -123,6 +123,7 @@ fun QuickMenuContent(
                 emptyMessage = stringResource(R.string.ui_quick_menu_empty_favorites),
                 onGameSelect = onGameSelect
             )
+            QuickMenuOrb.APPS -> Box(modifier = Modifier.fillMaxSize())
         }
     }
 }

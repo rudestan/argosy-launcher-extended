@@ -57,6 +57,8 @@
     <string name="home_footer_viewall_section">Section</string>
     <string name="home_footer_viewall_platform">Plateforme</string>
     <string name="home_footer_viewall_library">Bibliothèque</string>
+    <string name="home_footer_apps">Applis</string>
+    <string name="home_footer_open_apps">Ouvrir les applis</string>
 
     <string name="home_tile_add_title">Ajouter à la grille d\'accueil ?</string>
     <string name="home_tile_add_message">%1$s a fini de télécharger.</string>

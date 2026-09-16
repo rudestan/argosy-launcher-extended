@@ -57,6 +57,8 @@
     <string name="home_footer_viewall_section">सेक्शन</string>
     <string name="home_footer_viewall_platform">प्लेटफ़ॉर्म</string>
     <string name="home_footer_viewall_library">लाइब्रेरी</string>
+    <string name="home_footer_apps">ऐप्स</string>
+    <string name="home_footer_open_apps">ऐप्स खोलें</string>
 
     <string name="home_tile_add_title">होम ग्रिड में जोड़ें?</string>
     <string name="home_tile_add_message">%1$s डाउनलोड हो चुका है।</string>

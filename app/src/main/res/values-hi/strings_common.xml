@@ -634,6 +634,7 @@
     <string name="ui_quick_menu_orb_top_unplayed">टॉप न्यू</string>
     <string name="ui_quick_menu_orb_recent">हाल का</string>
     <string name="ui_quick_menu_orb_favorites">पसंदीदा</string>
+    <string name="ui_quick_menu_orb_apps">ऐप्स</string>
     <string name="ui_quick_menu_empty_most_played">अभी तक कोई गेम नहीं खेला गया</string>
     <string name="ui_quick_menu_empty_top_unplayed">कोई रेटेड गेम नहीं मिला</string>
     <string name="ui_quick_menu_empty_recent">कोई हाल का गेम नहीं</string>

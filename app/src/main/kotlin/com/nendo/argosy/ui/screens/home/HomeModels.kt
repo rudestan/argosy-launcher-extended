@@ -783,6 +783,12 @@ sealed class HomeEvent {
      * name, matched the way a changelog action's is.
      */
     data class NavigateToSettings(val section: String) : HomeEvent()
+
+    /**
+     * Opens the installed-apps screen. Reached from the footer's app-drawer icon and its L2
+     * trigger, which is why it carries no payload.
+     */
+    data object NavigateToApps : HomeEvent()
 }
 
 /**

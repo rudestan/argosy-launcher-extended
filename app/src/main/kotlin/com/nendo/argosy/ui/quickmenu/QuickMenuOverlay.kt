@@ -36,6 +36,7 @@ import com.nendo.argosy.ui.util.doubleTapNoFocus
 fun QuickMenuOverlay(
     viewModel: QuickMenuViewModel,
     onGameSelect: (Long) -> Unit,
+    onNavigateToApps: () -> Unit,
     closeQuickMenu: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -107,8 +108,13 @@ fun QuickMenuOverlay(
                 selectedOrb = uiState.selectedOrb,
                 isOrbRowFocused = !uiState.contentFocused,
                 onOrbClick = { orb ->
-                    viewModel.selectOrb(orb)
-                    viewModel.enterContent()
+                    if (orb == QuickMenuOrb.APPS) {
+                        viewModel.hide()
+                        onNavigateToApps()
+                    } else {
+                        viewModel.selectOrb(orb)
+                        viewModel.enterContent()
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             )
