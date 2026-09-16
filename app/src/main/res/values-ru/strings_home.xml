@@ -57,6 +57,8 @@
     <string name="home_footer_viewall_section">Раздел</string>
     <string name="home_footer_viewall_platform">Платформа</string>
     <string name="home_footer_viewall_library">Библиотека</string>
+    <string name="home_footer_apps">Приложения</string>
+    <string name="home_footer_open_apps">Открыть приложения</string>
 
     <string name="home_tile_add_title">Добавить на главный экран?</string>
     <string name="home_tile_add_message">%1$s: загрузка завершена.</string>

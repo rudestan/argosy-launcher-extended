@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import com.nendo.argosy.ui.util.clickableNoFocus
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -286,7 +287,8 @@ fun FooterBar(
     hints: List<Pair<InputButton, String>>,
     modifier: Modifier = Modifier,
     onHintClick: ((InputButton) -> Unit)? = null,
-    trailingContent: @Composable (() -> Unit)? = null
+    trailingContent: @Composable (() -> Unit)? = null,
+    centerContent: @Composable (() -> Unit)? = null
 ) {
     val footerStyle = LocalFooterStyle.current
     val backgroundColor = if (footerStyle.useAccentColor) {
@@ -295,7 +297,7 @@ fun FooterBar(
         MaterialTheme.colorScheme.surfaceVariant
     }
 
-    val quiet = hints.all { isObviousHint(it.first) }
+    val quiet = centerContent == null && hints.all { isObviousHint(it.first) }
     var displayHints by remember { mutableStateOf(hints) }
     if (!quiet) displayHints = hints
     val collapseProgress = footerCollapseProgress(quiet)
@@ -313,37 +315,48 @@ fun FooterBar(
     val faceHints = filteredHints.filter { it.first.category() == HintCategory.FACE }
         .sortedBy { it.first.faceButtonPriority() }
 
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = Dimens.footerHeight - Dimens.spacingSm - Dimens.borderMedium)
             .footerCollapse(collapseProgress)
             .background(backgroundColor)
-            .padding(horizontal = Dimens.spacingLg, vertical = Dimens.spacingSm + Dimens.spacingXs),
-        verticalAlignment = Alignment.Top
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg)) {
-            dpadHints.forEach { (button, action) ->
-                TappableFooterHint(button, action, onHintClick)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.spacingLg, vertical = Dimens.spacingSm + Dimens.spacingXs),
+            verticalAlignment = Alignment.Top
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg)) {
+                dpadHints.forEach { (button, action) ->
+                    TappableFooterHint(button, action, onHintClick)
+                }
+                bumperHints.forEach { (button, action) ->
+                    TappableFooterHint(button, action, onHintClick)
+                }
             }
-            bumperHints.forEach { (button, action) ->
-                TappableFooterHint(button, action, onHintClick)
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                shoulderHints.forEach { (button, action) ->
+                    TappableFooterHint(button, action, onHintClick)
+                }
+                faceHints.forEach { (button, action) ->
+                    TappableFooterHint(button, action, onHintClick)
+                }
+                trailingContent?.invoke()
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            shoulderHints.forEach { (button, action) ->
-                TappableFooterHint(button, action, onHintClick)
+        centerContent?.let { content ->
+            Box(modifier = Modifier.align(Alignment.Center), contentAlignment = Alignment.Center) {
+                content()
             }
-            faceHints.forEach { (button, action) ->
-                TappableFooterHint(button, action, onHintClick)
-            }
-            trailingContent?.invoke()
         }
     }
 }
@@ -354,6 +367,7 @@ fun FooterBarWithState(
     modifier: Modifier = Modifier,
     onHintClick: ((InputButton) -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
+    centerContent: @Composable (() -> Unit)? = null,
     forceVisible: Boolean = false
 ) {
     val footerStyle = LocalFooterStyle.current
@@ -363,7 +377,7 @@ fun FooterBarWithState(
         MaterialTheme.colorScheme.surfaceVariant
     }
 
-    val quiet = !forceVisible && hints.all { isObviousHint(it.button) }
+    val quiet = centerContent == null && !forceVisible && hints.all { isObviousHint(it.button) }
     var displayHints by remember { mutableStateOf(hints) }
     if (!quiet) displayHints = hints
     val collapseProgress = footerCollapseProgress(quiet)
@@ -381,37 +395,48 @@ fun FooterBarWithState(
     val faceHints = filteredHints.filter { it.button.category() == HintCategory.FACE }
         .sortedBy { it.button.faceButtonPriority() }
 
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = Dimens.footerHeight - Dimens.spacingSm - Dimens.borderMedium)
             .footerCollapse(collapseProgress)
             .background(backgroundColor)
-            .padding(horizontal = Dimens.spacingLg, vertical = Dimens.spacingSm + Dimens.spacingXs),
-        verticalAlignment = Alignment.Top
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg)) {
-            dpadHints.forEach { hint ->
-                TappableFooterHint(hint.button, hint.action, onHintClick, hint.enabled)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.spacingLg, vertical = Dimens.spacingSm + Dimens.spacingXs),
+            verticalAlignment = Alignment.Top
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg)) {
+                dpadHints.forEach { hint ->
+                    TappableFooterHint(hint.button, hint.action, onHintClick, hint.enabled)
+                }
+                bumperHints.forEach { hint ->
+                    TappableFooterHint(hint.button, hint.action, onHintClick, hint.enabled)
+                }
             }
-            bumperHints.forEach { hint ->
-                TappableFooterHint(hint.button, hint.action, onHintClick, hint.enabled)
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                shoulderHints.forEach { hint ->
+                    TappableFooterHint(hint.button, hint.action, onHintClick, hint.enabled)
+                }
+                faceHints.forEach { hint ->
+                    TappableFooterHint(hint.button, hint.action, onHintClick, hint.enabled)
+                }
+                trailingContent?.invoke()
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            shoulderHints.forEach { hint ->
-                TappableFooterHint(hint.button, hint.action, onHintClick, hint.enabled)
+        centerContent?.let { content ->
+            Box(modifier = Modifier.align(Alignment.Center), contentAlignment = Alignment.Center) {
+                content()
             }
-            faceHints.forEach { hint ->
-                TappableFooterHint(hint.button, hint.action, onHintClick, hint.enabled)
-            }
-            trailingContent?.invoke()
         }
     }
 }
@@ -441,11 +466,12 @@ private fun TappableFooterHint(
 fun SubtleFooterBar(
     hints: List<Pair<InputButton, String>>,
     modifier: Modifier = Modifier,
-    onHintClick: ((InputButton) -> Unit)? = null
+    onHintClick: ((InputButton) -> Unit)? = null,
+    centerContent: @Composable (() -> Unit)? = null
 ) {
     val footerStyle = LocalFooterStyle.current
 
-    val quiet = hints.all { isObviousHint(it.first) }
+    val quiet = centerContent == null && hints.all { isObviousHint(it.first) }
     var displayHints by remember { mutableStateOf(hints) }
     if (!quiet) displayHints = hints
     val collapseProgress = footerCollapseProgress(quiet)
@@ -468,25 +494,36 @@ fun SubtleFooterBar(
         if (isDarkTheme) Color.Black.copy(alpha = 0.4f) else Color.White.copy(alpha = 0.4f)
     }
 
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .footerCollapse(collapseProgress)
             .background(backgroundColor)
-            .padding(horizontal = Dimens.spacingLg, vertical = Dimens.spacingSm),
-        verticalAlignment = Alignment.Top
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg)) {
-            dpadHints.forEach { (button, action) ->
-                TappableFooterHint(button, action, onHintClick)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.spacingLg, vertical = Dimens.spacingSm),
+            verticalAlignment = Alignment.Top
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg)) {
+                dpadHints.forEach { (button, action) ->
+                    TappableFooterHint(button, action, onHintClick)
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg)) {
+                faceHints.forEach { (button, action) ->
+                    TappableFooterHint(button, action, onHintClick)
+                }
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        Row(horizontalArrangement = Arrangement.spacedBy(Dimens.spacingLg)) {
-            faceHints.forEach { (button, action) ->
-                TappableFooterHint(button, action, onHintClick)
+        centerContent?.let { content ->
+            Box(modifier = Modifier.align(Alignment.Center), contentAlignment = Alignment.Center) {
+                content()
             }
         }
     }

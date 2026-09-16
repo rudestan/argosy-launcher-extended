@@ -57,6 +57,8 @@
     <string name="home_footer_viewall_section">Abschnitt</string>
     <string name="home_footer_viewall_platform">Plattform</string>
     <string name="home_footer_viewall_library">Bibliothek</string>
+    <string name="home_footer_apps">Apps</string>
+    <string name="home_footer_open_apps">Apps öffnen</string>
 
     <string name="home_tile_add_title">Zum Startraster hinzufügen?</string>
     <string name="home_tile_add_message">%1$s wurde fertig heruntergeladen.</string>

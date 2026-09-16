@@ -152,6 +152,12 @@
     <string name="home_footer_viewall_platform">Platform</string>
     <!-- Footer hint on the card that ends a row. Noun: opens the full library list. -->
     <string name="home_footer_viewall_library">Library</string>
+    <!-- Footer hint bound to the left trigger. Noun: opens the installed-apps screen, the same
+         screen the drawer's "Apps" entry reaches. -->
+    <string name="home_footer_apps">Apps</string>
+    <!-- Content description of the app-drawer icon in the middle of the home footer. Verb phrase:
+         opens the installed-apps screen. -->
+    <string name="home_footer_open_apps">Open apps</string>
 
     <!-- Title of the prompt offered when a download finishes, asking whether the game should get a
          tile on the curated home grid. -->

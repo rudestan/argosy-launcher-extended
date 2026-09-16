@@ -606,6 +606,7 @@
     <string name="ui_quick_menu_orb_top_unplayed">高分未玩</string>
     <string name="ui_quick_menu_orb_recent">最近</string>
     <string name="ui_quick_menu_orb_favorites">收藏</string>
+    <string name="ui_quick_menu_orb_apps">应用</string>
     <string name="ui_quick_menu_empty_most_played">还没有玩过的游戏</string>
     <string name="ui_quick_menu_empty_top_unplayed">未找到评分游戏</string>
     <string name="ui_quick_menu_empty_recent">没有最近游玩记录</string>

@@ -46,6 +46,7 @@ import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.InstallMobile
 import androidx.compose.material.icons.filled.PlayArrow
@@ -175,6 +176,7 @@ fun HomeScreen(
     onDrawerToggle: () -> Unit,
     onChangelogAction: (RequiredAction) -> Unit = {},
     onNavigateToSettings: (String) -> Unit = {},
+    onNavigateToApps: () -> Unit = {},
     onPlayMedia: (itemId: String, startOver: Boolean) -> Unit = { _, _ -> },
     onMediaSelect: (String) -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
@@ -266,6 +268,7 @@ fun HomeScreen(
                 is HomeEvent.NavigateToSettings -> onNavigateToSettings(event.section)
                 is HomeEvent.PlayMedia -> onPlayMedia(event.itemId, event.startOver)
                 is HomeEvent.NavigateToMediaDetail -> onMediaSelect(event.itemId)
+                HomeEvent.NavigateToApps -> onNavigateToApps()
             }
         }
     }
@@ -1005,10 +1008,12 @@ fun HomeScreen(
                                 if (feature?.kind == com.nendo.argosy.domain.model.FeatureTileKind.RANDOM_GAME) {
                                     add(InputButton.Y to gridRerollLabel)
                                 }
+                                add(InputButton.LT to stringResource(R.string.home_footer_apps))
                                 add(InputButton.SELECT to gridOptionsLabel)
                             }
                         },
-                        variant = FooterVariant.SUBTLE
+                        variant = FooterVariant.SUBTLE,
+                        centerContent = { HomeFooterAppsIcon(onNavigateToApps) }
                     )
                     FooterSpacer()
                 } else if (uiState.isMediaRow || uiState.focusedMedia != null) {
@@ -1046,8 +1051,10 @@ fun HomeScreen(
                                 }
                                 add(InputButton.X to mediaDetailsLabel)
                             }
+                            add(InputButton.LT to stringResource(R.string.home_footer_apps))
                         },
                         variant = FooterVariant.SUBTLE,
+                        centerContent = { HomeFooterAppsIcon(onNavigateToApps) },
                         onHintClick = { button ->
                             when (button) {
                                 InputButton.A -> inputHandler.onConfirm()
@@ -1083,9 +1090,11 @@ fun HomeScreen(
                                 } else {
                                     stringResource(R.string.home_footer_game_favorite)
                                 },
-                                InputButton.X to stringResource(R.string.home_footer_game_details)
+                                InputButton.X to stringResource(R.string.home_footer_game_details),
+                                InputButton.LT to stringResource(R.string.home_footer_apps)
                             ),
                             variant = FooterVariant.SUBTLE,
+                            centerContent = { HomeFooterAppsIcon(onNavigateToApps) },
                             onHintClick = { button ->
                                 when (button) {
                                     InputButton.A -> {
@@ -1117,9 +1126,11 @@ fun HomeScreen(
                                 InputButton.DPAD_VERTICAL to
                                     stringResource(R.string.home_footer_viewall_platform)
                             },
-                            InputButton.A to stringResource(R.string.home_footer_viewall_library)
+                            InputButton.A to stringResource(R.string.home_footer_viewall_library),
+                            InputButton.LT to stringResource(R.string.home_footer_apps)
                         ),
                         variant = FooterVariant.SUBTLE,
+                        centerContent = { HomeFooterAppsIcon(onNavigateToApps) },
                         onHintClick = { button ->
                             if (button == InputButton.A) {
                                 onNavigateToLibrary(viewAll?.platformId, viewAll?.sourceFilter)
@@ -1482,6 +1493,18 @@ fun HomeScreen(
     }
         }
     }
+}
+
+@Composable
+private fun HomeFooterAppsIcon(onOpenApps: () -> Unit) {
+    Icon(
+        imageVector = Icons.Filled.Apps,
+        contentDescription = stringResource(R.string.home_footer_open_apps),
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier
+            .size(Dimens.iconMd)
+            .clickableNoFocus(onClick = onOpenApps)
+    )
 }
 
 @Composable

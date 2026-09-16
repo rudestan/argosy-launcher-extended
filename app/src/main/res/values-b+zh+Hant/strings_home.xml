@@ -57,6 +57,8 @@
     <string name="home_footer_viewall_section">區段</string>
     <string name="home_footer_viewall_platform">平台</string>
     <string name="home_footer_viewall_library">遊戲庫</string>
+    <string name="home_footer_apps">應用程式</string>
+    <string name="home_footer_open_apps">開啟應用程式</string>
 
     <string name="home_tile_add_title">要加入主畫面網格嗎？</string>
     <string name="home_tile_add_message">%1$s已下載完成。</string>

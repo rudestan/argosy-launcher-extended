@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 enum class QuickMenuOrb {
-    SEARCH, RANDOM, MOST_PLAYED, TOP_UNPLAYED, RECENT, FAVORITES
+    SEARCH, RANDOM, MOST_PLAYED, TOP_UNPLAYED, RECENT, FAVORITES, APPS
 }
 
 enum class MetadataType {
@@ -205,6 +205,7 @@ class QuickMenuViewModel @Inject constructor(
             QuickMenuOrb.TOP_UNPLAYED -> state.topUnplayedGames.getOrNull(state.focusedContentIndex)?.id
             QuickMenuOrb.RECENT -> state.recentGames.getOrNull(state.focusedContentIndex)?.id
             QuickMenuOrb.FAVORITES -> state.favoriteGames.getOrNull(state.focusedContentIndex)?.id
+            QuickMenuOrb.APPS -> null
         }
     }
 
@@ -261,6 +262,7 @@ class QuickMenuViewModel @Inject constructor(
             QuickMenuOrb.TOP_UNPLAYED -> state.topUnplayedGames.size
             QuickMenuOrb.RECENT -> state.recentGames.size
             QuickMenuOrb.FAVORITES -> state.favoriteGames.size
+            QuickMenuOrb.APPS -> 0
         }
     }
 

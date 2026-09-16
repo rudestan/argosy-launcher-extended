@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.History
@@ -167,6 +168,7 @@ private val QuickMenuOrb.icon: ImageVector
         QuickMenuOrb.TOP_UNPLAYED -> Icons.Default.Star
         QuickMenuOrb.RECENT -> Icons.Default.History
         QuickMenuOrb.FAVORITES -> Icons.Default.Favorite
+        QuickMenuOrb.APPS -> Icons.Default.Apps
     }
 
 @get:StringRes
@@ -178,4 +180,5 @@ private val QuickMenuOrb.labelRes: Int
         QuickMenuOrb.TOP_UNPLAYED -> R.string.ui_quick_menu_orb_top_unplayed
         QuickMenuOrb.RECENT -> R.string.ui_quick_menu_orb_recent
         QuickMenuOrb.FAVORITES -> R.string.ui_quick_menu_orb_favorites
+        QuickMenuOrb.APPS -> R.string.ui_quick_menu_orb_apps
     }

@@ -446,6 +446,12 @@ fun ArgosyApp(
                     }
                 }
             },
+            onNavigateToApps = {
+                closeQuickMenu()
+                navController.navigate(Screen.Apps.route) {
+                    launchSingleTop = true
+                }
+            },
             onDismiss = { closeQuickMenu() }
         )
     }
@@ -2055,6 +2061,12 @@ fun ArgosyApp(
                         navController.navigate(Screen.GameDetail.createRoute(gameId)) {
                             launchSingleTop = true
                         }
+                    }
+                },
+                onNavigateToApps = {
+                    closeQuickMenu()
+                    navController.navigate(Screen.Apps.route) {
+                        launchSingleTop = true
                     }
                 },
                 closeQuickMenu = closeQuickMenu

@@ -6,6 +6,7 @@ import com.nendo.argosy.ui.input.InputResult
 class QuickMenuInputHandler(
     private val viewModel: QuickMenuViewModel,
     private val onGameSelect: (Long) -> Unit,
+    private val onNavigateToApps: () -> Unit,
     private val onDismiss: () -> Unit
 ) : InputHandler {
 
@@ -33,7 +34,9 @@ class QuickMenuInputHandler(
         if (!state.isVisible) return InputResult.UNHANDLED
 
         if (!state.contentFocused) {
-            viewModel.enterContent()
+            if (state.selectedOrb != QuickMenuOrb.APPS) {
+                viewModel.enterContent()
+            }
         } else {
             viewModel.moveContentDown()
         }
@@ -75,7 +78,12 @@ class QuickMenuInputHandler(
                 }
             }
         } else {
-            viewModel.enterContent()
+            if (state.selectedOrb == QuickMenuOrb.APPS) {
+                viewModel.hide()
+                onNavigateToApps()
+            } else {
+                viewModel.enterContent()
+            }
         }
         return InputResult.HANDLED
     }

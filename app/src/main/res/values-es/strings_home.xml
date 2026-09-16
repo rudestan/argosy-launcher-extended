@@ -57,6 +57,8 @@
     <string name="home_footer_viewall_section">Sección</string>
     <string name="home_footer_viewall_platform">Plataforma</string>
     <string name="home_footer_viewall_library">Biblioteca</string>
+    <string name="home_footer_apps">Aplicaciones</string>
+    <string name="home_footer_open_apps">Abrir aplicaciones</string>
 
     <string name="home_tile_add_title">¿Agregar a la cuadrícula de inicio?</string>
     <string name="home_tile_add_message">%1$s terminó de descargarse.</string>
