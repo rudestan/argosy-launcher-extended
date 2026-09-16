@@ -40,7 +40,6 @@ data class AppUi(
     val packageName: String,
     val label: String,
     val isHidden: Boolean = false,
-    val isSystemApp: Boolean = false,
     val isOnHome: Boolean = false,
     val isOnSecondaryHome: Boolean = false
 )
@@ -55,11 +54,16 @@ enum class AppContextMenuItem {
     UNINSTALL
 }
 
+enum class AppsTab {
+    INSTALLED, SYSTEM
+}
+
 data class AppsUiState(
     val apps: List<AppUi> = emptyList(),
     val focusedIndex: Int = 0,
     val gridDensity: GridDensity = GridDensity.NORMAL,
     val isLoading: Boolean = true,
+    val selectedTab: AppsTab = AppsTab.INSTALLED,
     val showHiddenApps: Boolean = false,
     val showContextMenu: Boolean = false,
     val contextMenuFocusIndex: Int = 0,
@@ -118,7 +122,6 @@ class AppsViewModel @Inject constructor(
     val events: SharedFlow<AppsEvent> = _events.asSharedFlow()
 
     private var hiddenApps: Set<String> = emptySet()
-    private var visibleSystemApps: Set<String> = emptySet()
     private var secondaryHomeApps: Set<String> = emptySet()
     private var customOrder: List<String> = emptyList()
     private var originalAppsBeforeReorder: List<AppUi> = emptyList()
@@ -152,11 +155,11 @@ class AppsViewModel @Inject constructor(
 
             val prefs = preferencesRepository.preferences.first()
             hiddenApps = prefs.hiddenApps
-            visibleSystemApps = prefs.visibleSystemApps
             secondaryHomeApps = prefs.secondaryHomeApps
             customOrder = prefs.appOrder
 
             val showHidden = _uiState.value.showHiddenApps
+            val selectedTab = _uiState.value.selectedTab
             val allApps = appsRepository.getInstalledApps(includeSystemApps = true)
 
             val homePackages = gameRepository.getBySource(GameSource.ANDROID_APP)
@@ -164,17 +167,15 @@ class AppsViewModel @Inject constructor(
                 .toSet()
 
             val apps = allApps
-                .filter { app -> shouldShowApp(app, showHidden) }
+                .filter { app -> shouldShowApp(app, showHidden, selectedTab) }
                 .let { appList -> sortApps(appList) }
 
             _uiState.update { state ->
                 state.copy(
                     apps = apps.map { app ->
-                        val isHidden = app.packageName in hiddenApps ||
-                            (app.isSystemApp && app.packageName !in visibleSystemApps)
+                        val isHidden = app.packageName in hiddenApps
                         app.toUi(
                             isHidden = isHidden,
-                            isSystemApp = app.isSystemApp,
                             isOnHome = app.packageName in homePackages,
                             isOnSecondaryHome = app.packageName in secondaryHomeApps
                         )
@@ -186,15 +187,19 @@ class AppsViewModel @Inject constructor(
         }
     }
 
-    private fun shouldShowApp(app: InstalledApp, showHidden: Boolean): Boolean {
-        val isExplicitlyHidden = app.packageName in hiddenApps
-        val isSystemAppVisible = app.isSystemApp && app.packageName in visibleSystemApps
-        val isSystemAppHidden = app.isSystemApp && app.packageName !in visibleSystemApps
+    private fun shouldShowApp(app: InstalledApp, showHidden: Boolean, tab: AppsTab): Boolean {
+        if (app.isArgosy) return false
+        val matchesTab = when (tab) {
+            AppsTab.INSTALLED -> !app.isSystemApp
+            AppsTab.SYSTEM -> app.isSystemApp
+        }
+        if (!matchesTab) return false
 
+        val isExplicitlyHidden = app.packageName in hiddenApps
         return if (showHidden) {
-            isExplicitlyHidden || isSystemAppHidden
+            isExplicitlyHidden
         } else {
-            (!isExplicitlyHidden && !app.isSystemApp) || isSystemAppVisible
+            !isExplicitlyHidden
         }
     }
 
@@ -211,6 +216,26 @@ class AppsViewModel @Inject constructor(
     fun toggleShowHidden() {
         _uiState.update { it.copy(showHiddenApps = !it.showHiddenApps) }
         loadApps()
+    }
+
+    fun selectTab(tab: AppsTab) {
+        if (_uiState.value.selectedTab == tab) return
+        _uiState.update {
+            it.copy(
+                selectedTab = tab,
+                focusedIndex = 0,
+                isReorderMode = false,
+                showContextMenu = false
+            )
+        }
+        loadApps()
+    }
+
+    fun cycleTab(delta: Int) {
+        val tabs = AppsTab.entries
+        val currentIndex = tabs.indexOf(_uiState.value.selectedTab)
+        val newIndex = (currentIndex + delta).mod(tabs.size)
+        selectTab(tabs[newIndex])
     }
 
     fun launchAppAt(index: Int) {
@@ -270,7 +295,7 @@ class AppsViewModel @Inject constructor(
                 toggleSecondaryHomeStatus(app.packageName, app.isOnSecondaryHome)
             }
             AppContextMenuItem.TOGGLE_VISIBILITY -> {
-                toggleAppVisibility(app.packageName, app.isHidden, app.isSystemApp)
+                toggleAppVisibility(app.packageName, app.isHidden)
             }
             AppContextMenuItem.REORDER -> {
                 enterReorderMode()
@@ -284,25 +309,15 @@ class AppsViewModel @Inject constructor(
         dismissContextMenu()
     }
 
-    private fun toggleAppVisibility(packageName: String, isCurrentlyHidden: Boolean, isSystemApp: Boolean) {
+    private fun toggleAppVisibility(packageName: String, isCurrentlyHidden: Boolean) {
         viewModelScope.launch {
-            if (isSystemApp) {
-                val newVisible = if (isCurrentlyHidden) {
-                    visibleSystemApps + packageName
-                } else {
-                    visibleSystemApps - packageName
-                }
-                preferencesRepository.setVisibleSystemApps(newVisible)
-                visibleSystemApps = newVisible
+            val newHidden = if (isCurrentlyHidden) {
+                hiddenApps - packageName
             } else {
-                val newHidden = if (isCurrentlyHidden) {
-                    hiddenApps - packageName
-                } else {
-                    hiddenApps + packageName
-                }
-                preferencesRepository.setHiddenApps(newHidden)
-                hiddenApps = newHidden
+                hiddenApps + packageName
             }
+            preferencesRepository.setHiddenApps(newHidden)
+            hiddenApps = newHidden
             loadApps()
         }
     }
@@ -547,14 +562,12 @@ class AppsViewModel @Inject constructor(
 
     private fun InstalledApp.toUi(
         isHidden: Boolean = false,
-        isSystemApp: Boolean = false,
         isOnHome: Boolean = false,
         isOnSecondaryHome: Boolean = false
     ) = AppUi(
         packageName = packageName,
         label = label,
         isHidden = isHidden,
-        isSystemApp = isSystemApp,
         isOnHome = isOnHome,
         isOnSecondaryHome = isOnSecondaryHome
     )
@@ -652,6 +665,22 @@ class AppsViewModel @Inject constructor(
 
         override fun onSecondaryAction(): InputResult {
             handleSecondaryAction()
+            return InputResult.HANDLED
+        }
+
+        override fun onPrevSection(): InputResult {
+            if (_uiState.value.showContextMenu || _uiState.value.isReorderMode) {
+                return InputResult.HANDLED
+            }
+            cycleTab(-1)
+            return InputResult.HANDLED
+        }
+
+        override fun onNextSection(): InputResult {
+            if (_uiState.value.showContextMenu || _uiState.value.isReorderMode) {
+                return InputResult.HANDLED
+            }
+            cycleTab(1)
             return InputResult.HANDLED
         }
 

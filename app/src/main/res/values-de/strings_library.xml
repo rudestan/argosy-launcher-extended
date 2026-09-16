@@ -118,6 +118,9 @@
         <item quantity="other">%d Filter</item>
     </plurals>
     <string name="library_apps_empty">Keine Apps gefunden</string>
+    <string name="library_apps_tab_installed">Installiert</string>
+    <string name="library_apps_tab_system">System</string>
+    <string name="library_apps_hint_tab">Tab</string>
 
     <string name="library_apps_hint_move">Verschieben</string>
     <string name="library_apps_hint_save">Speichern</string>

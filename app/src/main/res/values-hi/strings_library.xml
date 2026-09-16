@@ -118,6 +118,9 @@
         <item quantity="other">%d फ़िल्टर</item>
     </plurals>
     <string name="library_apps_empty">कोई ऐप नहीं मिला</string>
+    <string name="library_apps_tab_installed">इंस्टॉल</string>
+    <string name="library_apps_tab_system">सिस्टम</string>
+    <string name="library_apps_hint_tab">टैब</string>
 
     <string name="library_apps_hint_move">मूव</string>
     <string name="library_apps_hint_save">सेव करें</string>

@@ -134,6 +134,9 @@
         <item quantity="other">%d фильтра</item>
     </plurals>
     <string name="library_apps_empty">Приложения не найдены</string>
+    <string name="library_apps_tab_installed">Установленные</string>
+    <string name="library_apps_tab_system">Системные</string>
+    <string name="library_apps_hint_tab">Вкладка</string>
 
     <string name="library_apps_hint_move">Переместить</string>
     <string name="library_apps_hint_save">Сохранить</string>

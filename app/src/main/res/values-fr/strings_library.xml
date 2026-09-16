@@ -126,6 +126,9 @@
         <item quantity="other">%d filtres</item>
     </plurals>
     <string name="library_apps_empty">Aucune application trouvée</string>
+    <string name="library_apps_tab_installed">Installées</string>
+    <string name="library_apps_tab_system">Système</string>
+    <string name="library_apps_hint_tab">Onglet</string>
 
     <string name="library_apps_hint_move">Déplacer</string>
     <string name="library_apps_hint_save">Enregistrer</string>
