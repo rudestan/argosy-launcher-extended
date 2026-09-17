@@ -110,6 +110,7 @@ class UserPreferencesRepository @Inject constructor(
             showAppDrawer = display.showAppDrawer,
             hiddenApps = app.hiddenApps,
             secondaryHomeApps = app.secondaryHomeApps,
+            quickMenuApps = app.quickMenuApps,
             visibleSystemApps = app.visibleSystemApps,
             appOrder = app.appOrder,
             maxConcurrentDownloads = storage.maxConcurrentDownloads,
@@ -469,9 +470,10 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setFirstRunComplete() = appPrefs.setFirstRunComplete()
     suspend fun setBetaUpdatesEnabled(enabled: Boolean) = appPrefs.setBetaUpdatesEnabled(enabled)
-    suspend fun setHiddenApps(apps: Set<String>) = appPrefs.setHiddenApps(apps)
-    suspend fun setSecondaryHomeApps(apps: Set<String>) = appPrefs.setSecondaryHomeApps(apps)
-    suspend fun setVisibleSystemApps(apps: Set<String>) = appPrefs.setVisibleSystemApps(apps)
+   suspend fun setHiddenApps(apps: Set<String>) = appPrefs.setHiddenApps(apps)
+   suspend fun setSecondaryHomeApps(apps: Set<String>) = appPrefs.setSecondaryHomeApps(apps)
+   suspend fun setQuickMenuApps(apps: Set<String>) = appPrefs.setQuickMenuApps(apps)
+   suspend fun setVisibleSystemApps(apps: Set<String>) = appPrefs.setVisibleSystemApps(apps)
     suspend fun setAppOrder(order: List<String>) = appPrefs.setAppOrder(order)
     suspend fun setLastSeenVersion(version: String) = appPrefs.setLastSeenVersion(version)
     suspend fun addLibraryRecentSearch(query: String) = appPrefs.addLibraryRecentSearch(query)
@@ -739,6 +741,7 @@ data class UserPreferences(
     val boxArtCacheEnabled: Boolean = true,
     val hiddenApps: Set<String> = emptySet(),
     val secondaryHomeApps: Set<String> = emptySet(),
+    val quickMenuApps: Set<String> = emptySet(),
     val visibleSystemApps: Set<String> = emptySet(),
     val appOrder: List<String> = emptyList(),
     val maxConcurrentDownloads: Int = 1,

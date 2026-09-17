@@ -41,13 +41,15 @@ data class AppUi(
     val label: String,
     val isHidden: Boolean = false,
     val isOnHome: Boolean = false,
-    val isOnSecondaryHome: Boolean = false
+    val isOnSecondaryHome: Boolean = false,
+    val isOnQuickMenu: Boolean = false
 )
 
 enum class AppContextMenuItem {
     APP_INFO,
     OPEN_ON_TOP,
     TOGGLE_HOME,
+    TOGGLE_QUICK_MENU,
     TOGGLE_SECONDARY_HOME,
     TOGGLE_VISIBILITY,
     REORDER,
@@ -86,6 +88,7 @@ data class AppsUiState(
                 add(AppContextMenuItem.OPEN_ON_TOP)
             }
             add(AppContextMenuItem.TOGGLE_HOME)
+            add(AppContextMenuItem.TOGGLE_QUICK_MENU)
             if (hasSecondaryDisplay) {
                 add(AppContextMenuItem.TOGGLE_SECONDARY_HOME)
             }
@@ -123,6 +126,7 @@ class AppsViewModel @Inject constructor(
 
     private var hiddenApps: Set<String> = emptySet()
     private var secondaryHomeApps: Set<String> = emptySet()
+    private var quickMenuApps: Set<String> = emptySet()
     private var customOrder: List<String> = emptyList()
     private var originalAppsBeforeReorder: List<AppUi> = emptyList()
 
@@ -156,6 +160,7 @@ class AppsViewModel @Inject constructor(
             val prefs = preferencesRepository.preferences.first()
             hiddenApps = prefs.hiddenApps
             secondaryHomeApps = prefs.secondaryHomeApps
+            quickMenuApps = prefs.quickMenuApps
             customOrder = prefs.appOrder
 
             val showHidden = _uiState.value.showHiddenApps
@@ -177,7 +182,8 @@ class AppsViewModel @Inject constructor(
                         app.toUi(
                             isHidden = isHidden,
                             isOnHome = app.packageName in homePackages,
-                            isOnSecondaryHome = app.packageName in secondaryHomeApps
+                            isOnSecondaryHome = app.packageName in secondaryHomeApps,
+                            isOnQuickMenu = app.packageName in quickMenuApps
                         )
                     },
                     isLoading = false,
@@ -291,6 +297,9 @@ class AppsViewModel @Inject constructor(
             AppContextMenuItem.TOGGLE_HOME -> {
                 toggleHomeStatus(app.packageName, app.label, app.isOnHome)
             }
+            AppContextMenuItem.TOGGLE_QUICK_MENU -> {
+                toggleQuickMenuStatus(app.packageName, app.isOnQuickMenu)
+            }
             AppContextMenuItem.TOGGLE_SECONDARY_HOME -> {
                 toggleSecondaryHomeStatus(app.packageName, app.isOnSecondaryHome)
             }
@@ -385,6 +394,31 @@ class AppsViewModel @Inject constructor(
                     apps = state.apps.map { app ->
                         if (app.packageName == packageName) {
                             app.copy(isOnSecondaryHome = !isCurrentlyOnSecondaryHome)
+                        } else {
+                            app
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    private fun toggleQuickMenuStatus(packageName: String, isCurrentlyOnQuickMenu: Boolean) {
+        viewModelScope.launch {
+            val newQuickMenuApps = if (isCurrentlyOnQuickMenu) {
+                quickMenuApps - packageName
+            } else {
+                quickMenuApps + packageName
+            }
+            preferencesRepository.setQuickMenuApps(newQuickMenuApps)
+            quickMenuApps = newQuickMenuApps
+            soundManager.play(if (isCurrentlyOnQuickMenu) SoundType.UNFAVORITE else SoundType.FAVORITE)
+
+            _uiState.update { state ->
+                state.copy(
+                    apps = state.apps.map { app ->
+                        if (app.packageName == packageName) {
+                            app.copy(isOnQuickMenu = !isCurrentlyOnQuickMenu)
                         } else {
                             app
                         }
@@ -563,13 +597,15 @@ class AppsViewModel @Inject constructor(
     private fun InstalledApp.toUi(
         isHidden: Boolean = false,
         isOnHome: Boolean = false,
-        isOnSecondaryHome: Boolean = false
+        isOnSecondaryHome: Boolean = false,
+        isOnQuickMenu: Boolean = false
     ) = AppUi(
         packageName = packageName,
         label = label,
         isHidden = isHidden,
         isOnHome = isOnHome,
-        isOnSecondaryHome = isOnSecondaryHome
+        isOnSecondaryHome = isOnSecondaryHome,
+        isOnQuickMenu = isOnQuickMenu
     )
 
     fun createInputHandler(

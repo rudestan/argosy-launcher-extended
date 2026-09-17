@@ -137,6 +137,8 @@
     <string name="library_apps_menu_open_on_top">Auf oberem Bildschirm öffnen</string>
     <string name="library_apps_menu_remove_from_home">Von Startseite entfernen</string>
     <string name="library_apps_menu_add_to_home">Zur Startseite hinzufügen</string>
+    <string name="library_apps_menu_remove_from_quick_menu">Aus dem Schnellmenü entfernen</string>
+    <string name="library_apps_menu_add_to_quick_menu">Zum Schnellmenü hinzufügen</string>
     <string name="library_apps_menu_remove_from_second_screen">Vom zweiten Bildschirm entfernen</string>
     <string name="library_apps_menu_add_to_second_screen">Zum zweiten Bildschirm hinzufügen</string>
     <string name="library_apps_menu_show">Einblenden</string>

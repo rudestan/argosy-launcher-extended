@@ -1305,6 +1305,8 @@
     <string name="ui_quick_menu_empty_favorites">No favorites yet</string>
     <!-- Shown under the random orb when the library is empty. -->
     <string name="ui_quick_menu_empty_random">No games available</string>
+    <!-- Shown under the apps orb when no app has been added to it yet. -->
+    <string name="ui_quick_menu_empty_apps">No apps added</string>
     <!-- Placeholder in the quick menu's search field. -->
     <string name="ui_quick_menu_search_placeholder">Search games...</string>
     <!-- Shown under an almost-empty search field, saying how much to type. -->

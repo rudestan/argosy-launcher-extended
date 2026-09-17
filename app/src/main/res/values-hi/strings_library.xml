@@ -137,6 +137,8 @@
     <string name="library_apps_menu_open_on_top">टॉप स्क्रीन पर खोलें</string>
     <string name="library_apps_menu_remove_from_home">होम से हटाएं</string>
     <string name="library_apps_menu_add_to_home">होम में जोड़ें</string>
+    <string name="library_apps_menu_remove_from_quick_menu">क्विक मेनू से हटाएं</string>
+    <string name="library_apps_menu_add_to_quick_menu">क्विक मेनू में जोड़ें</string>
     <string name="library_apps_menu_remove_from_second_screen">सेकंड स्क्रीन से हटाएं</string>
     <string name="library_apps_menu_add_to_second_screen">सेकंड स्क्रीन में जोड़ें</string>
     <string name="library_apps_menu_show">दिखाएं</string>

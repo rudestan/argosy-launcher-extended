@@ -153,6 +153,8 @@
     <string name="library_apps_menu_open_on_top">Открыть на верхнем экране</string>
     <string name="library_apps_menu_remove_from_home">Убрать с главного экрана</string>
     <string name="library_apps_menu_add_to_home">Добавить на главный экран</string>
+    <string name="library_apps_menu_remove_from_quick_menu">Убрать из быстрого меню</string>
+    <string name="library_apps_menu_add_to_quick_menu">Добавить в быстрое меню</string>
     <string name="library_apps_menu_remove_from_second_screen">Убрать со второго экрана</string>
     <string name="library_apps_menu_add_to_second_screen">Добавить на второй экран</string>
     <string name="library_apps_menu_show">Показать</string>

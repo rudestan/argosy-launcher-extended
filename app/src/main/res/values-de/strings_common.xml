@@ -640,6 +640,7 @@
     <string name="ui_quick_menu_empty_recent">Keine kürzlichen Spiele</string>
     <string name="ui_quick_menu_empty_favorites">Noch keine Favoriten</string>
     <string name="ui_quick_menu_empty_random">Keine Spiele verfügbar</string>
+    <string name="ui_quick_menu_empty_apps">Keine Apps hinzugefügt</string>
     <string name="ui_quick_menu_search_placeholder">Spiele suchen...</string>
     <string name="ui_quick_menu_search_prompt">Geben Sie mindestens 2 Zeichen ein, um zu suchen</string>
     <string name="ui_quick_menu_search_no_results">Keine Spiele gefunden für \"%1$s\"</string>

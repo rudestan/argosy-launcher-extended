@@ -129,6 +129,8 @@
     <string name="library_apps_menu_open_on_top">在顶屏打开</string>
     <string name="library_apps_menu_remove_from_home">从主页移除</string>
     <string name="library_apps_menu_add_to_home">添加到主页</string>
+    <string name="library_apps_menu_remove_from_quick_menu">从快捷菜单移除</string>
+    <string name="library_apps_menu_add_to_quick_menu">添加到快捷菜单</string>
     <string name="library_apps_menu_remove_from_second_screen">从副屏幕移除</string>
     <string name="library_apps_menu_add_to_second_screen">添加到副屏幕</string>
     <string name="library_apps_menu_show">显示</string>

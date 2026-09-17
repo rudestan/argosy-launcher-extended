@@ -1,9 +1,11 @@
 package com.nendo.argosy.ui.quickmenu
 
 import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nendo.argosy.data.local.dao.SearchCandidate
+import com.nendo.argosy.data.repository.AppsRepository
 import com.nendo.argosy.data.repository.GameRepository
 import com.nendo.argosy.data.repository.PlatformRepository
 import com.nendo.argosy.data.local.entity.GameEntity
@@ -57,6 +59,11 @@ data class GameCardUi(
     val isDownloaded: Boolean
 )
 
+data class QuickMenuAppUi(
+    val packageName: String,
+    val label: String
+)
+
 data class QuickMenuUiState(
     val isVisible: Boolean = false,
     val selectedOrb: QuickMenuOrb = QuickMenuOrb.MOST_PLAYED,
@@ -71,16 +78,19 @@ data class QuickMenuUiState(
     val topUnplayedGames: List<GameRowUi> = emptyList(),
     val recentGames: List<GameRowUi> = emptyList(),
     val favoriteGames: List<GameRowUi> = emptyList(),
+    val quickMenuApps: List<QuickMenuAppUi> = emptyList(),
     val isLoading: Boolean = false
 )
 
 private const val LIST_LIMIT = 20
+internal const val QUICK_MENU_APP_GRID_COLUMNS = 4
 
 @HiltViewModel
 class QuickMenuViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val gameRepository: GameRepository,
     private val platformRepository: PlatformRepository,
+    private val appsRepository: AppsRepository,
     private val getTopUnplayedUseCase: GetTopUnplayedUseCase,
     private val librarySyncBus: LibrarySyncBus,
     private val preferencesRepository: UserPreferencesRepository
@@ -161,33 +171,76 @@ class QuickMenuViewModel @Inject constructor(
 
     fun moveContentUp() {
         _uiState.update { state ->
-            if (state.selectedOrb == QuickMenuOrb.SEARCH && !state.searchInputFocused && state.focusedContentIndex == 0) {
-                state.copy(searchInputFocused = true)
-            } else {
-                val newIndex = (state.focusedContentIndex - 1).coerceAtLeast(0)
-                state.copy(focusedContentIndex = newIndex)
+            when {
+                state.selectedOrb == QuickMenuOrb.APPS ->
+                    state.copy(focusedContentIndex = appFocusIndex(state, dx = 0, dy = -1))
+                state.selectedOrb == QuickMenuOrb.SEARCH && !state.searchInputFocused && state.focusedContentIndex == 0 ->
+                    state.copy(searchInputFocused = true)
+                else ->
+                    state.copy(focusedContentIndex = (state.focusedContentIndex - 1).coerceAtLeast(0))
             }
         }
     }
 
     fun moveContentDown() {
         _uiState.update { state ->
-            if (state.selectedOrb == QuickMenuOrb.SEARCH && state.searchInputFocused) {
-                val hasItems = if (state.searchQuery.length < 2) {
-                    state.recentSearches.isNotEmpty()
-                } else {
-                    state.searchResults.isNotEmpty()
+            when {
+                state.selectedOrb == QuickMenuOrb.APPS ->
+                    state.copy(focusedContentIndex = appFocusIndex(state, dx = 0, dy = 1))
+                state.selectedOrb == QuickMenuOrb.SEARCH && state.searchInputFocused -> {
+                    val hasItems = if (state.searchQuery.length < 2) {
+                        state.recentSearches.isNotEmpty()
+                    } else {
+                        state.searchResults.isNotEmpty()
+                    }
+                    if (hasItems) {
+                        state.copy(searchInputFocused = false, focusedContentIndex = 0)
+                    } else {
+                        state
+                    }
                 }
-                if (hasItems) {
-                    state.copy(searchInputFocused = false, focusedContentIndex = 0)
-                } else {
-                    state
+                else -> {
+                    val maxIndex = getCurrentContentSize() - 1
+                    val newIndex = (state.focusedContentIndex + 1).coerceAtMost(maxIndex.coerceAtLeast(0))
+                    state.copy(focusedContentIndex = newIndex)
                 }
-            } else {
-                val maxIndex = getCurrentContentSize() - 1
-                val newIndex = (state.focusedContentIndex + 1).coerceAtMost(maxIndex.coerceAtLeast(0))
-                state.copy(focusedContentIndex = newIndex)
             }
+        }
+    }
+
+    fun moveContentLeft() {
+        _uiState.update { state ->
+            if (state.selectedOrb == QuickMenuOrb.APPS) {
+                state.copy(focusedContentIndex = appFocusIndex(state, dx = -1, dy = 0))
+            } else {
+                state
+            }
+        }
+    }
+
+    fun moveContentRight() {
+        _uiState.update { state ->
+            if (state.selectedOrb == QuickMenuOrb.APPS) {
+                state.copy(focusedContentIndex = appFocusIndex(state, dx = 1, dy = 0))
+            } else {
+                state
+            }
+        }
+    }
+
+    private fun appFocusIndex(state: QuickMenuUiState, dx: Int, dy: Int): Int {
+        val size = state.quickMenuApps.size
+        if (size == 0) return state.focusedContentIndex
+        val current = state.focusedContentIndex
+        return when {
+            dy != 0 -> {
+                val target = current + dy * QUICK_MENU_APP_GRID_COLUMNS
+                if (target in 0 until size) target else current
+            }
+            dx < 0 -> if (current % QUICK_MENU_APP_GRID_COLUMNS > 0) current - 1 else current
+            dx > 0 ->
+                if (current % QUICK_MENU_APP_GRID_COLUMNS < QUICK_MENU_APP_GRID_COLUMNS - 1 && current + 1 < size) current + 1 else current
+            else -> current
         }
     }
 
@@ -208,6 +261,16 @@ class QuickMenuViewModel @Inject constructor(
             QuickMenuOrb.APPS -> null
         }
     }
+
+    fun getSelectedAppPackage(): String? {
+        val state = _uiState.value
+        if (!state.contentFocused) return null
+        if (state.selectedOrb != QuickMenuOrb.APPS) return null
+        return state.quickMenuApps.getOrNull(state.focusedContentIndex)?.packageName
+    }
+
+    fun getLaunchIntent(packageName: String): Intent? =
+        appsRepository.getLaunchIntent(packageName)
 
     fun isOnRecentSearches(): Boolean {
         val state = _uiState.value
@@ -262,7 +325,7 @@ class QuickMenuViewModel @Inject constructor(
             QuickMenuOrb.TOP_UNPLAYED -> state.topUnplayedGames.size
             QuickMenuOrb.RECENT -> state.recentGames.size
             QuickMenuOrb.FAVORITES -> state.favoriteGames.size
-            QuickMenuOrb.APPS -> 0
+            QuickMenuOrb.APPS -> state.quickMenuApps.size
         }
     }
 
@@ -276,9 +339,23 @@ class QuickMenuViewModel @Inject constructor(
             launch { loadFavorites() }
             launch { loadRandomGame() }
             launch { loadRecentSearches() }
+            launch { loadApps() }
 
             _uiState.update { it.copy(isLoading = false) }
         }
+    }
+
+    private suspend fun loadApps() {
+        val pinned = preferencesRepository.preferences.first().quickMenuApps
+        if (pinned.isEmpty()) {
+            _uiState.update { it.copy(quickMenuApps = emptyList()) }
+            return
+        }
+        val apps = appsRepository.getInstalledApps(includeSystemApps = true)
+            .filter { it.packageName in pinned && !it.isArgosy }
+            .map { QuickMenuAppUi(it.packageName, it.label) }
+            .sortedBy { it.label.lowercase() }
+        _uiState.update { it.copy(quickMenuApps = apps) }
     }
 
     private suspend fun loadRecentSearches() {

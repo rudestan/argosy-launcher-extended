@@ -6,7 +6,7 @@ import com.nendo.argosy.ui.input.InputResult
 class QuickMenuInputHandler(
     private val viewModel: QuickMenuViewModel,
     private val onGameSelect: (Long) -> Unit,
-    private val onNavigateToApps: () -> Unit,
+    private val onLaunchApp: (String) -> Unit,
     private val onDismiss: () -> Unit
 ) : InputHandler {
 
@@ -34,9 +34,7 @@ class QuickMenuInputHandler(
         if (!state.isVisible) return InputResult.UNHANDLED
 
         if (!state.contentFocused) {
-            if (state.selectedOrb != QuickMenuOrb.APPS) {
-                viewModel.enterContent()
-            }
+            viewModel.enterContent()
         } else {
             viewModel.moveContentDown()
         }
@@ -47,7 +45,11 @@ class QuickMenuInputHandler(
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
 
-        if (!state.contentFocused) {
+        if (state.contentFocused) {
+            if (state.selectedOrb == QuickMenuOrb.APPS) {
+                viewModel.moveContentLeft()
+            }
+        } else {
             viewModel.moveOrbLeft()
         }
         return InputResult.HANDLED
@@ -57,7 +59,11 @@ class QuickMenuInputHandler(
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
 
-        if (!state.contentFocused) {
+        if (state.contentFocused) {
+            if (state.selectedOrb == QuickMenuOrb.APPS) {
+                viewModel.moveContentRight()
+            }
+        } else {
             viewModel.moveOrbRight()
         }
         return InputResult.HANDLED
@@ -68,7 +74,12 @@ class QuickMenuInputHandler(
         if (!state.isVisible) return InputResult.UNHANDLED
 
         if (state.contentFocused) {
-            if (viewModel.isOnRecentSearches()) {
+            if (state.selectedOrb == QuickMenuOrb.APPS) {
+                viewModel.getSelectedAppPackage()?.let { packageName ->
+                    viewModel.hide()
+                    onLaunchApp(packageName)
+                }
+            } else if (viewModel.isOnRecentSearches()) {
                 viewModel.selectRecentSearch(state.focusedContentIndex)
             } else {
                 viewModel.getSelectedGameId()?.let { gameId ->
@@ -78,12 +89,7 @@ class QuickMenuInputHandler(
                 }
             }
         } else {
-            if (state.selectedOrb == QuickMenuOrb.APPS) {
-                viewModel.hide()
-                onNavigateToApps()
-            } else {
-                viewModel.enterContent()
-            }
+            viewModel.enterContent()
         }
         return InputResult.HANDLED
     }
