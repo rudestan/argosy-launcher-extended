@@ -488,7 +488,8 @@ class HomeViewModel @Inject constructor(
                         hideRecentRowHome = prefs.hideRecentRowHome,
                         hideRecommendationsRowHome = prefs.hideRecommendationsRowHome,
                         hideEmptyPlatformsHome = prefs.hideEmptyPlatformsHome,
-                        installedOnlyHome = prefs.installedOnlyHome
+                        installedOnlyHome = prefs.installedOnlyHome,
+                        showAppDrawer = prefs.showAppDrawer
                     )
                     if (updated.holdsCurrentRow) {
                         updated

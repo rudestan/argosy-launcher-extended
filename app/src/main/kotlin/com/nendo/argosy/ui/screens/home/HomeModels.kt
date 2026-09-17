@@ -304,7 +304,8 @@ data class HomeUiState(
     val hideRecentRowHome: Boolean = false,
     val hideRecommendationsRowHome: Boolean = false,
     val hideEmptyPlatformsHome: Boolean = false,
-    val installedOnlyHome: Boolean = false
+    val installedOnlyHome: Boolean = false,
+    val showAppDrawer: Boolean = true
 ) {
     /**
      * The rows on offer, in the order [HomeSectionKind] declares them: the fixed opening run, then

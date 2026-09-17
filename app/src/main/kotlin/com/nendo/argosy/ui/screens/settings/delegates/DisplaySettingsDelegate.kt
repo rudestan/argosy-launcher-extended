@@ -510,6 +510,13 @@ class DisplaySettingsDelegate @Inject constructor(
         }
     }
 
+    fun setShowAppDrawer(scope: CoroutineScope, enabled: Boolean) {
+        scope.launch {
+            preferencesRepository.setShowAppDrawer(enabled)
+            _state.update { it.copy(showAppDrawer = enabled) }
+        }
+    }
+
     fun showGripControllerModal() {
         _state.update { it.copy(showGripControllerModal = true) }
     }

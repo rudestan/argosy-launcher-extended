@@ -628,6 +628,7 @@ class HomeInputHandler(
         ) {
             return InputResult.HANDLED
         }
+        if (!state.showAppDrawer) return InputResult.UNHANDLED
         actions.openApps()
         return InputResult.handled(SoundType.SELECT)
     }
