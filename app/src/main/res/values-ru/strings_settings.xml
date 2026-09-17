@@ -104,6 +104,8 @@
     <string name="settings_interface_ui_scale_title">Масштаб интерфейса</string>
     <string name="settings_interface_compact_footer_title">Компактная панель</string>
     <string name="settings_interface_compact_footer_subtitle">Использовать более тонкую панель подсказок</string>
+    <string name="settings_interface_show_app_drawer_title">Показывать список приложений</string>
+    <string name="settings_interface_show_app_drawer_subtitle">Показывать значок списка приложений в нижней панели и включить реакцию L2</string>
     <string name="settings_interface_controller_grip_title">Хват контроллера</string>
     <string name="settings_interface_controller_grip_subtitle">Сдвинуть интерфейс выше зоны, занимаемой хватом</string>
     <string name="settings_interface_home_screen_title">Главный экран</string>

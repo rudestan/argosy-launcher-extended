@@ -107,6 +107,7 @@ class UserPreferencesRepository @Inject constructor(
             homeLayout = display.homeLayout,
             useAccentColorFooter = display.useAccentColorFooter,
             compactFooter = display.compactFooter,
+            showAppDrawer = display.showAppDrawer,
             hiddenApps = app.hiddenApps,
             secondaryHomeApps = app.secondaryHomeApps,
             visibleSystemApps = app.visibleSystemApps,
@@ -284,6 +285,7 @@ class UserPreferencesRepository @Inject constructor(
         displayPrefs.setHomeLayout(settings)
     suspend fun setUseAccentColorFooter(use: Boolean) = displayPrefs.setUseAccentColorFooter(use)
     suspend fun setCompactFooter(enabled: Boolean) = displayPrefs.setCompactFooter(enabled)
+   suspend fun setShowAppDrawer(enabled: Boolean) = displayPrefs.setShowAppDrawer(enabled)
     suspend fun setGripAutoControllers(
         controllers: com.nendo.argosy.domain.model.GripAutoControllers
     ) = displayPrefs.setGripAutoControllers(controllers)
@@ -766,6 +768,7 @@ data class UserPreferences(
         com.nendo.argosy.domain.model.HomeLayoutSettings(),
     val useAccentColorFooter: Boolean = false,
     val compactFooter: Boolean = false,
+    val showAppDrawer: Boolean = true,
     val fileLoggingEnabled: Boolean = false,
     val fileLoggingPath: String? = null,
     val fileLogLevel: LogLevel = LogLevel.INFO,

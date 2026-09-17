@@ -103,6 +103,8 @@
     <string name="settings_interface_ui_scale_title">Échelle de l\'interface</string>
     <string name="settings_interface_compact_footer_title">Pied de page compact</string>
     <string name="settings_interface_compact_footer_subtitle">Utiliser une barre de contrôle plus fine</string>
+    <string name="settings_interface_show_app_drawer_title">Afficher le tiroir d\'applications</string>
+    <string name="settings_interface_show_app_drawer_subtitle">Afficher l\'icône du tiroir d\'applications dans le pied de page et activer la réaction L2</string>
     <string name="settings_interface_controller_grip_title">Grip manette</string>
     <string name="settings_interface_controller_grip_subtitle">Décaler l\'interface hors de la zone couverte par un grip</string>
     <string name="settings_interface_home_screen_title">Écran d\'accueil</string>

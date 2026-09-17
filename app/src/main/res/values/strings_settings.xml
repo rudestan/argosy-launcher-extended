@@ -211,6 +211,11 @@
     <!-- Second line of that row. "Control guide bar" is the strip that says what each button
          does. -->
     <string name="settings_interface_compact_footer_subtitle">Use a thinner control guide bar</string>
+    <!-- Row title. Verb phrase: makes the app-drawer icon appear in the footer. -->
+    <string name="settings_interface_show_app_drawer_title">Show Application Drawer</string>
+    <!-- Second line of that row. "L2" is the name of a gamepad trigger and stays as the letters
+         L2. -->
+    <string name="settings_interface_show_app_drawer_subtitle">Show application drawer icon in footer and enable L2 reaction</string>
     <!-- Row opening the settings for handhelds with a clip-on grip. Noun phrase. -->
     <string name="settings_interface_controller_grip_title">Controller Grip</string>
     <!-- Second line of that row. -->

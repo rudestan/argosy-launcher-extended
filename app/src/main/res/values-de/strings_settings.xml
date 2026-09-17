@@ -111,6 +111,8 @@
     <string name="settings_interface_ui_scale_title">UI-Skalierung</string>
     <string name="settings_interface_compact_footer_title">Kompakter Footer</string>
     <string name="settings_interface_compact_footer_subtitle">Schmalere Bedienleiste verwenden</string>
+    <string name="settings_interface_show_app_drawer_title">Anwendungsübersicht anzeigen</string>
+    <string name="settings_interface_show_app_drawer_subtitle">App-Übersicht-Symbol in der Fußleiste anzeigen und L2-Reaktion aktivieren</string>
     <string name="settings_interface_controller_grip_title">Controller-Griff</string>
     <string name="settings_interface_controller_grip_subtitle">Schiebt die Oberfläche aus dem vom Griff verdeckten Bereich</string>
     <string name="settings_interface_home_screen_title">Startbildschirm</string>

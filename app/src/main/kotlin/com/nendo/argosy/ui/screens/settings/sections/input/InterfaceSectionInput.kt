@@ -61,6 +61,9 @@ internal class InterfaceSectionInput(
             InterfaceItem.CompactFooter -> return toggleLeftRight(direction, state.display.compactFooter) {
                 viewModel.setCompactFooter(it)
             }
+            InterfaceItem.ShowAppDrawer -> return toggleLeftRight(direction, state.display.showAppDrawer) {
+                viewModel.setShowAppDrawer(it)
+            }
             else -> {}
         }
         return InputResult.UNHANDLED

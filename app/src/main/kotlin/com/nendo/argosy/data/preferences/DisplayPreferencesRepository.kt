@@ -64,6 +64,7 @@ data class DisplayPreferences(
         com.nendo.argosy.domain.model.HomeLayoutSettings(),
     val useAccentColorFooter: Boolean = false,
     val compactFooter: Boolean = false,
+    val showAppDrawer: Boolean = true,
     val boxArtShape: BoxArtShape = BoxArtShape.STANDARD,
     val boxArtCornerRadius: BoxArtCornerRadius = BoxArtCornerRadius.MEDIUM,
     val boxArtBorderThickness: BoxArtBorderThickness = BoxArtBorderThickness.MEDIUM,
@@ -155,6 +156,7 @@ class DisplayPreferencesRepository @Inject constructor(
         val HOME_LAYOUT_CONFIG = stringPreferencesKey("home_layout_config")
         val USE_ACCENT_COLOR_FOOTER = booleanPreferencesKey("use_accent_color_footer")
         val COMPACT_FOOTER = booleanPreferencesKey("compact_footer")
+        val SHOW_APP_DRAWER = booleanPreferencesKey("show_app_drawer")
         val GRIP_AUTO_CONTROLLERS = stringPreferencesKey("grip_auto_controllers")
         val GRIP_RESERVE_MODE = stringPreferencesKey("grip_reserve_mode")
         val BOX_ART_SHAPE = stringPreferencesKey("box_art_shape")
@@ -248,6 +250,7 @@ class DisplayPreferencesRepository @Inject constructor(
             ),
             useAccentColorFooter = prefs[Keys.USE_ACCENT_COLOR_FOOTER] ?: false,
             compactFooter = prefs[Keys.COMPACT_FOOTER] ?: false,
+            showAppDrawer = prefs[Keys.SHOW_APP_DRAWER] ?: true,
             boxArtShape = BoxArtShape.fromString(prefs[Keys.BOX_ART_SHAPE]),
             boxArtCornerRadius = BoxArtCornerRadius.fromString(prefs[Keys.BOX_ART_CORNER_RADIUS]),
             boxArtBorderThickness = BoxArtBorderThickness.fromString(prefs[Keys.BOX_ART_BORDER_THICKNESS]),
@@ -474,6 +477,10 @@ class DisplayPreferencesRepository @Inject constructor(
 
     suspend fun setCompactFooter(enabled: Boolean) {
         dataStore.edit { it[Keys.COMPACT_FOOTER] = enabled }
+    }
+
+    suspend fun setShowAppDrawer(enabled: Boolean) {
+        dataStore.edit { it[Keys.SHOW_APP_DRAWER] = enabled }
     }
 
     suspend fun setGripAutoControllers(

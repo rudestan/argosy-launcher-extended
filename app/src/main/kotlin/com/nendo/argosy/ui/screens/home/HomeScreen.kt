@@ -756,6 +756,18 @@ fun HomeScreen(
                     .offset(x = videoModeRailOffsetX, y = videoModeFooterOffset)
                     .padding(bottom = Dimens.spacingLg)
             ) {
+                val appsCenterContent: (@Composable () -> Unit)? =
+                    if (uiState.showAppDrawer) {
+                        { HomeFooterAppsIcon(onNavigateToApps) }
+                    } else {
+                        null
+                    }
+                val appsHint: Pair<InputButton, String>? =
+                    if (uiState.showAppDrawer) {
+                        InputButton.LT to stringResource(R.string.home_footer_apps)
+                    } else {
+                        null
+                    }
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1008,12 +1020,12 @@ fun HomeScreen(
                                 if (feature?.kind == com.nendo.argosy.domain.model.FeatureTileKind.RANDOM_GAME) {
                                     add(InputButton.Y to gridRerollLabel)
                                 }
-                                add(InputButton.LT to stringResource(R.string.home_footer_apps))
+                                appsHint?.let { add(it) }
                                 add(InputButton.SELECT to gridOptionsLabel)
                             }
                         },
                         variant = FooterVariant.SUBTLE,
-                        centerContent = { HomeFooterAppsIcon(onNavigateToApps) }
+                        centerContent = appsCenterContent
                     )
                     FooterSpacer()
                 } else if (uiState.isMediaRow || uiState.focusedMedia != null) {
@@ -1051,10 +1063,10 @@ fun HomeScreen(
                                 }
                                 add(InputButton.X to mediaDetailsLabel)
                             }
-                            add(InputButton.LT to stringResource(R.string.home_footer_apps))
+                            appsHint?.let { add(it) }
                         },
                         variant = FooterVariant.SUBTLE,
-                        centerContent = { HomeFooterAppsIcon(onNavigateToApps) },
+                        centerContent = appsCenterContent,
                         onHintClick = { button ->
                             when (button) {
                                 InputButton.A -> inputHandler.onConfirm()
@@ -1068,7 +1080,7 @@ fun HomeScreen(
                 } else if (focusedGame != null && !uiState.showGameMenu) {
                     if (!uiState.isVideoPreviewActive) {
                         FooterHints(
-                            hints = listOf(
+                            hints = listOfNotNull(
                                 (if (isAutoGrid) InputButton.DPAD else InputButton.DPAD_HORIZONTAL)
                                     to stringResource(R.string.home_footer_game_item),
                                 if (isAutoGrid) {
@@ -1091,10 +1103,10 @@ fun HomeScreen(
                                     stringResource(R.string.home_footer_game_favorite)
                                 },
                                 InputButton.X to stringResource(R.string.home_footer_game_details),
-                                InputButton.LT to stringResource(R.string.home_footer_apps)
+                                appsHint
                             ),
                             variant = FooterVariant.SUBTLE,
-                            centerContent = { HomeFooterAppsIcon(onNavigateToApps) },
+                            centerContent = appsCenterContent,
                             onHintClick = { button ->
                                 when (button) {
                                     InputButton.A -> {
@@ -1116,7 +1128,7 @@ fun HomeScreen(
                 } else {
                     val viewAll = uiState.focusedItem as? HomeRowItem.ViewAll
                     FooterHints(
-                        hints = listOf(
+                        hints = listOfNotNull(
                             (if (isAutoGrid) InputButton.DPAD else InputButton.DPAD_HORIZONTAL)
                                 to stringResource(R.string.home_footer_viewall_item),
                             if (isAutoGrid) {
@@ -1127,10 +1139,10 @@ fun HomeScreen(
                                     stringResource(R.string.home_footer_viewall_platform)
                             },
                             InputButton.A to stringResource(R.string.home_footer_viewall_library),
-                            InputButton.LT to stringResource(R.string.home_footer_apps)
+                            appsHint
                         ),
                         variant = FooterVariant.SUBTLE,
-                        centerContent = { HomeFooterAppsIcon(onNavigateToApps) },
+                        centerContent = appsCenterContent,
                         onHintClick = { button ->
                             if (button == InputButton.A) {
                                 onNavigateToLibrary(viewAll?.platformId, viewAll?.sourceFilter)
