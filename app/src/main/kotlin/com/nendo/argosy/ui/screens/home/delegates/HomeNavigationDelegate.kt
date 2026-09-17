@@ -157,6 +157,7 @@ class HomeNavigationDelegate @Inject constructor(
 
     fun navigateToContinuePlaying(state: HomeUiState): Boolean {
         if (state.currentRow == HomeRow.Continue) return false
+        if (state.hideRecentRowHome) return false
         if (state.recentGames.isEmpty()) return false
         rowGameIndexes[state.currentRow] = state.focusedGameIndex
         return true

@@ -421,6 +421,17 @@ data class HomeUiState(
         get() = (currentRow as? HomeRow.MediaLibrary)?.let { mediaLibraries.getOrNull(it.index) }
 
     /**
+     * Whether the active layout's "show all games" switch is on, resolved the way the platform rows
+     * resolve it so the Android and Steam rows drop their View All card at the same time.
+     */
+    private val showsEveryGame: Boolean
+        get() = when (layoutKind) {
+            com.nendo.argosy.domain.model.HomeLayoutKind.CAROUSEL -> carouselConfig.showAllGames
+            com.nendo.argosy.domain.model.HomeLayoutKind.AUTO_GRID -> autoGridConfig.showAllGames
+            com.nendo.argosy.domain.model.HomeLayoutKind.CUSTOM_GRID -> false
+        }
+
+    /**
      * What the row under the cursor holds, in the order it is walked.
      *
      * Favorites is the one row carrying both kinds, and they run one after the other -- games, then
@@ -452,19 +463,33 @@ data class HomeUiState(
             }
             HomeRow.Android -> {
                 if (androidGames.isEmpty()) emptyList()
-                else androidGames.map { HomeRowItem.Game(it) } + HomeRowItem.ViewAll(
-                    platformId = com.nendo.argosy.data.platform.LocalPlatformIds.ANDROID,
-                    platformName = "Android",
-                    logoPath = null
-                )
+                else androidGames.map { HomeRowItem.Game(it) } +
+                    if (showsEveryGame) {
+                        emptyList()
+                    } else {
+                        listOf(
+                            HomeRowItem.ViewAll(
+                                platformId = com.nendo.argosy.data.platform.LocalPlatformIds.ANDROID,
+                                platformName = "Android",
+                                logoPath = null
+                            )
+                        )
+                    }
             }
             HomeRow.Steam -> {
                 if (steamGames.isEmpty()) emptyList()
-                else steamGames.map { HomeRowItem.Game(it) } + HomeRowItem.ViewAll(
-                    platformId = com.nendo.argosy.data.platform.LocalPlatformIds.STEAM,
-                    platformName = "Steam",
-                    logoPath = null
-                )
+                else steamGames.map { HomeRowItem.Game(it) } +
+                    if (showsEveryGame) {
+                        emptyList()
+                    } else {
+                        listOf(
+                            HomeRowItem.ViewAll(
+                                platformId = com.nendo.argosy.data.platform.LocalPlatformIds.STEAM,
+                                platformName = "Steam",
+                                logoPath = null
+                            )
+                        )
+                    }
             }
             HomeRow.ContinueWatching -> continueWatchingMedia.map { HomeRowItem.Media(it) }
             HomeRow.NextUp -> nextUpMedia.map { HomeRowItem.Media(it) }
