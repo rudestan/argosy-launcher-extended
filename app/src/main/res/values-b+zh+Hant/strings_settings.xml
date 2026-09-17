@@ -91,7 +91,7 @@
     <string name="settings_interface_compact_footer_title">精簡頁尾</string>
     <string name="settings_interface_compact_footer_subtitle">使用較窄的操作提示列</string>
     <string name="settings_interface_show_app_drawer_title">顯示應用程式抽屜</string>
-    <string name="settings_interface_show_app_drawer_subtitle">在底部列顯示應用程式抽屜圖示並啟用 L2 反應</string>
+    <string name="settings_interface_show_app_drawer_subtitle">在底部列顯示應用程式抽屜圖示並啟用左扳機反應</string>
     <string name="settings_interface_controller_grip_title">控制器握把</string>
     <string name="settings_interface_controller_grip_subtitle">將介面上移，避開握把遮擋的區域</string>
     <string name="settings_interface_home_screen_title">主畫面</string>

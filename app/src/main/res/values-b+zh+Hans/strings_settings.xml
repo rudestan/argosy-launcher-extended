@@ -100,7 +100,7 @@
     <string name="settings_interface_compact_footer_title">紧凑底栏</string>
     <string name="settings_interface_compact_footer_subtitle">使用更薄的操作提示栏</string>
     <string name="settings_interface_show_app_drawer_title">显示应用抽屉</string>
-    <string name="settings_interface_show_app_drawer_subtitle">在底部栏显示应用抽屉图标并启用 L2 反应</string>
+    <string name="settings_interface_show_app_drawer_subtitle">在底部栏显示应用抽屉图标并启用左扳机反应</string>
     <string name="settings_interface_controller_grip_title">手柄夹持</string>
     <string name="settings_interface_controller_grip_subtitle">将界面上移，避开夹持配件遮挡的区域</string>
     <string name="settings_interface_home_screen_title">主屏幕</string>
