@@ -35,7 +35,7 @@ android {
         minSdk = 26
         targetSdk = 35
         versionCode = 335
-        versionName = "2.15.1"
+        versionName = "2.15.1_0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -192,6 +192,7 @@ android.applicationVariants.all {
         val output = this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
         val abi = output.getFilter("ABI")
         val baseVersionCode = android.defaultConfig.versionCode ?: 0
+        (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName = "argosy-launcher-ext-${abi ?: "universal"}-$versionName.apk"
         output.versionCodeOverride = if (abi != null) {
             (abiCodes[abi] ?: 0) * 1_000_000 + baseVersionCode
         } else {
