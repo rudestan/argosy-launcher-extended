@@ -25,6 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.res.stringResource
+import com.nendo.argosy.R
+import com.nendo.argosy.ui.primitives.ArgosyConfirmModalHost
 import com.nendo.argosy.ui.quickmenu.components.QuickMenuAppPicker
 import com.nendo.argosy.ui.quickmenu.components.QuickMenuContent
 import com.nendo.argosy.ui.quickmenu.components.QuickMenuOrbRow
@@ -131,6 +134,7 @@ fun QuickMenuOverlay(
                         viewModel.selectRecentSearch(query)
                     },
                     onAppLaunch = onLaunchApp,
+                    onRemoveApp = { viewModel.requestRemoveApp(it) },
                     onAddApp = { viewModel.openAppPicker() },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -158,4 +162,15 @@ fun QuickMenuOverlay(
             modifier = Modifier.fillMaxSize()
         )
     }
+
+    ArgosyConfirmModalHost(
+        visible = uiState.showRemoveConfirm,
+        title = stringResource(R.string.ui_quick_menu_remove_confirm_title),
+        message = stringResource(R.string.ui_quick_menu_remove_confirm_message),
+        confirmLabel = stringResource(R.string.ui_quick_menu_remove_confirm_yes),
+        cancelLabel = stringResource(R.string.ui_quick_menu_remove_confirm_no),
+        destructive = true,
+        onConfirm = { viewModel.confirmRemoveApp() },
+        onDismiss = { viewModel.cancelRemoveApp() }
+    )
 }

@@ -646,6 +646,10 @@
     <string name="ui_quick_menu_apps_section_installed">इंस्टॉल</string>
     <string name="ui_quick_menu_apps_section_system">सिस्टम</string>
     <string name="ui_quick_menu_apps_section_hidden">छिपे हुए</string>
+    <string name="ui_quick_menu_remove_confirm_title">क्विक मेनू से हटाएं</string>
+    <string name="ui_quick_menu_remove_confirm_message">क्विक लॉन्च से ऐप हटाएं?</string>
+    <string name="ui_quick_menu_remove_confirm_yes">हाँ</string>
+    <string name="ui_quick_menu_remove_confirm_no">नहीं</string>
     <string name="ui_quick_menu_search_placeholder">गेम खोजें...</string>
     <string name="ui_quick_menu_search_prompt">खोजने के लिए कम से कम 2 अक्षर टाइप करें</string>
     <string name="ui_quick_menu_search_no_results">\"%1$s\" के लिए कोई गेम नहीं मिला</string>

@@ -84,6 +84,8 @@ data class QuickMenuUiState(
     val pickerHiddenApps: List<QuickMenuAppUi> = emptyList(),
     val showAppPicker: Boolean = false,
     val appPickerFocusIndex: Int = 0,
+    val showRemoveConfirm: Boolean = false,
+    val removeConfirmPackage: String? = null,
     val isLoading: Boolean = false
 ) {
     val pickerAllApps: List<QuickMenuAppUi>
@@ -314,6 +316,28 @@ class QuickMenuViewModel @Inject constructor(
         }
     }
 
+    fun removeAppFromQuickMenu(packageName: String) {
+        viewModelScope.launch {
+            val prefs = preferencesRepository.preferences.first()
+            preferencesRepository.setQuickMenuApps(prefs.quickMenuApps - packageName)
+            loadApps()
+        }
+    }
+
+    fun requestRemoveApp(packageName: String) {
+        _uiState.update { it.copy(showRemoveConfirm = true, removeConfirmPackage = packageName) }
+    }
+
+    fun cancelRemoveApp() {
+        _uiState.update { it.copy(showRemoveConfirm = false, removeConfirmPackage = null) }
+    }
+
+    fun confirmRemoveApp() {
+        val packageName = _uiState.value.removeConfirmPackage ?: return
+        _uiState.update { it.copy(showRemoveConfirm = false, removeConfirmPackage = null) }
+        removeAppFromQuickMenu(packageName)
+    }
+
     fun isOnRecentSearches(): Boolean {
         val state = _uiState.value
         return state.selectedOrb == QuickMenuOrb.SEARCH &&
@@ -409,12 +433,13 @@ class QuickMenuViewModel @Inject constructor(
             .filter { it.packageName !in pinned && it.packageName in hidden }
             .map { QuickMenuAppUi(it.packageName, it.label) }
             .sortedBy { it.label.lowercase() }
-        _uiState.update {
-            it.copy(
+        _uiState.update { state ->
+            state.copy(
                 quickMenuApps = pinnedApps,
                 pickerInstalledApps = pickerInstalledApps,
                 pickerSystemApps = pickerSystemApps,
-                pickerHiddenApps = pickerHiddenApps
+                pickerHiddenApps = pickerHiddenApps,
+                focusedContentIndex = state.focusedContentIndex.coerceAtMost(pinnedApps.size)
             )
         }
     }

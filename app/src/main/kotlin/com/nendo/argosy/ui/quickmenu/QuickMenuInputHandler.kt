@@ -1,5 +1,6 @@
 package com.nendo.argosy.ui.quickmenu
 
+import com.nendo.argosy.core.input.SoundType
 import com.nendo.argosy.ui.input.InputHandler
 import com.nendo.argosy.ui.input.InputResult
 
@@ -182,6 +183,21 @@ class QuickMenuInputHandler(
     override fun onSelect(): InputResult {
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
+        return InputResult.HANDLED
+    }
+
+    override fun onSecondaryAction(): InputResult {
+        val state = viewModel.uiState.value
+        if (!state.isVisible) return InputResult.UNHANDLED
+
+        if (state.showAppPicker) return InputResult.HANDLED
+
+        if (state.contentFocused && state.selectedOrb == QuickMenuOrb.APPS && !viewModel.isAddAppTileFocused()) {
+            viewModel.getSelectedAppPackage()?.let { packageName ->
+                viewModel.requestRemoveApp(packageName)
+                return InputResult.handled(SoundType.OPEN_MODAL)
+            }
+        }
         return InputResult.HANDLED
     }
 }

@@ -5,8 +5,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import com.nendo.argosy.ui.util.clickableNoFocus
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +35,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -81,6 +85,7 @@ fun QuickMenuContent(
     onGameSelect: (Long) -> Unit,
     onRecentSearchSelect: (String) -> Unit,
     onAppLaunch: (String) -> Unit,
+    onRemoveApp: (String) -> Unit,
     onAddApp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -144,6 +149,7 @@ fun QuickMenuContent(
                 focusedIndex = uiState.focusedContentIndex,
                 isFocused = isFocused,
                 onAppLaunch = onAppLaunch,
+                onRemoveApp = onRemoveApp,
                 onAddApp = onAddApp,
                 modifier = Modifier.fillMaxSize()
             )
@@ -430,6 +436,7 @@ private fun AppsContent(
     focusedIndex: Int,
     isFocused: Boolean,
     onAppLaunch: (String) -> Unit,
+    onRemoveApp: (String) -> Unit,
     onAddApp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -455,7 +462,8 @@ private fun AppsContent(
             QuickMenuAppCard(
                 app = app,
                 isFocused = isFocused && index == focusedIndex,
-                onClick = { onAppLaunch(app.packageName) }
+                onClick = { onAppLaunch(app.packageName) },
+                onLongClick = { onRemoveApp(app.packageName) }
             )
         }
         item(key = "add_app") {
@@ -514,11 +522,13 @@ private fun AddAppTile(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun QuickMenuAppCard(
     app: QuickMenuAppUi,
     isFocused: Boolean,
     onClick: () -> Unit,
+    onLongClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val shape = RoundedCornerShape(Dimens.radiusMd)
@@ -531,7 +541,12 @@ private fun QuickMenuAppCard(
                 } else Modifier
             )
             .clip(shape)
-            .clickableNoFocus(onClick = onClick)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            )
             .background(
                 if (isFocused) LocalArgosyTheme.current.focusAccent.copy(alpha = 0.15f)
                     .compositeOver(MaterialTheme.colorScheme.surface)
