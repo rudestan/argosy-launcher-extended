@@ -79,8 +79,16 @@ data class QuickMenuUiState(
     val recentGames: List<GameRowUi> = emptyList(),
     val favoriteGames: List<GameRowUi> = emptyList(),
     val quickMenuApps: List<QuickMenuAppUi> = emptyList(),
+    val pickerInstalledApps: List<QuickMenuAppUi> = emptyList(),
+    val pickerSystemApps: List<QuickMenuAppUi> = emptyList(),
+    val pickerHiddenApps: List<QuickMenuAppUi> = emptyList(),
+    val showAppPicker: Boolean = false,
+    val appPickerFocusIndex: Int = 0,
     val isLoading: Boolean = false
-)
+) {
+    val pickerAllApps: List<QuickMenuAppUi>
+        get() = pickerInstalledApps + pickerSystemApps + pickerHiddenApps
+}
 
 private const val LIST_LIMIT = 20
 internal const val QUICK_MENU_APP_GRID_COLUMNS = 4
@@ -229,8 +237,7 @@ class QuickMenuViewModel @Inject constructor(
     }
 
     private fun appFocusIndex(state: QuickMenuUiState, dx: Int, dy: Int): Int {
-        val size = state.quickMenuApps.size
-        if (size == 0) return state.focusedContentIndex
+        val size = state.quickMenuApps.size + 1
         val current = state.focusedContentIndex
         return when {
             dy != 0 -> {
@@ -271,6 +278,41 @@ class QuickMenuViewModel @Inject constructor(
 
     fun getLaunchIntent(packageName: String): Intent? =
         appsRepository.getLaunchIntent(packageName)
+
+    fun isAddAppTileFocused(): Boolean {
+        val state = _uiState.value
+        return state.contentFocused &&
+            state.selectedOrb == QuickMenuOrb.APPS &&
+            state.focusedContentIndex == state.quickMenuApps.size
+    }
+
+    fun openAppPicker() {
+        _uiState.update { it.copy(showAppPicker = true, appPickerFocusIndex = 0) }
+    }
+
+    fun closeAppPicker() {
+        _uiState.update { it.copy(showAppPicker = false, appPickerFocusIndex = 0) }
+    }
+
+    fun moveAppPickerFocus(delta: Int) {
+        _uiState.update { state ->
+            val maxIndex = state.pickerAllApps.size - 1
+            if (maxIndex < 0) return@update state
+            state.copy(appPickerFocusIndex = (state.appPickerFocusIndex + delta).coerceIn(0, maxIndex))
+        }
+    }
+
+    fun selectAppFromPicker() {
+        val packageName = _uiState.value.pickerAllApps
+            .getOrNull(_uiState.value.appPickerFocusIndex)
+            ?.packageName ?: return
+        closeAppPicker()
+        viewModelScope.launch {
+            val prefs = preferencesRepository.preferences.first()
+            preferencesRepository.setQuickMenuApps(prefs.quickMenuApps + packageName)
+            loadApps()
+        }
+    }
 
     fun isOnRecentSearches(): Boolean {
         val state = _uiState.value
@@ -325,7 +367,7 @@ class QuickMenuViewModel @Inject constructor(
             QuickMenuOrb.TOP_UNPLAYED -> state.topUnplayedGames.size
             QuickMenuOrb.RECENT -> state.recentGames.size
             QuickMenuOrb.FAVORITES -> state.favoriteGames.size
-            QuickMenuOrb.APPS -> state.quickMenuApps.size
+            QuickMenuOrb.APPS -> state.quickMenuApps.size + 1
         }
     }
 
@@ -346,16 +388,35 @@ class QuickMenuViewModel @Inject constructor(
     }
 
     private suspend fun loadApps() {
-        val pinned = preferencesRepository.preferences.first().quickMenuApps
-        if (pinned.isEmpty()) {
-            _uiState.update { it.copy(quickMenuApps = emptyList()) }
-            return
-        }
-        val apps = appsRepository.getInstalledApps(includeSystemApps = true)
-            .filter { it.packageName in pinned && !it.isArgosy }
+        val prefs = preferencesRepository.preferences.first()
+        val pinned = prefs.quickMenuApps
+        val hidden = prefs.hiddenApps
+        val installed = appsRepository.getInstalledApps(includeSystemApps = true)
+            .filter { !it.isArgosy }
+        val pinnedApps = installed
+            .filter { it.packageName in pinned }
             .map { QuickMenuAppUi(it.packageName, it.label) }
             .sortedBy { it.label.lowercase() }
-        _uiState.update { it.copy(quickMenuApps = apps) }
+        val pickerInstalledApps = installed
+            .filter { it.packageName !in pinned && it.packageName !in hidden && !it.isSystemApp }
+            .map { QuickMenuAppUi(it.packageName, it.label) }
+            .sortedBy { it.label.lowercase() }
+        val pickerSystemApps = installed
+            .filter { it.packageName !in pinned && it.packageName !in hidden && it.isSystemApp }
+            .map { QuickMenuAppUi(it.packageName, it.label) }
+            .sortedBy { it.label.lowercase() }
+        val pickerHiddenApps = installed
+            .filter { it.packageName !in pinned && it.packageName in hidden }
+            .map { QuickMenuAppUi(it.packageName, it.label) }
+            .sortedBy { it.label.lowercase() }
+        _uiState.update {
+            it.copy(
+                quickMenuApps = pinnedApps,
+                pickerInstalledApps = pickerInstalledApps,
+                pickerSystemApps = pickerSystemApps,
+                pickerHiddenApps = pickerHiddenApps
+            )
+        }
     }
 
     private suspend fun loadRecentSearches() {

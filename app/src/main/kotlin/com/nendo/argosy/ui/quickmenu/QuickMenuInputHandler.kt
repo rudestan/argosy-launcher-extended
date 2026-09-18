@@ -14,6 +14,11 @@ class QuickMenuInputHandler(
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
 
+        if (state.showAppPicker) {
+            viewModel.moveAppPickerFocus(-1)
+            return InputResult.HANDLED
+        }
+
         if (state.contentFocused) {
             val isSearchWithInput = state.selectedOrb == QuickMenuOrb.SEARCH && state.searchInputFocused
             val isAtFirstItem = state.focusedContentIndex == 0 && !state.searchInputFocused
@@ -33,6 +38,11 @@ class QuickMenuInputHandler(
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
 
+        if (state.showAppPicker) {
+            viewModel.moveAppPickerFocus(1)
+            return InputResult.HANDLED
+        }
+
         if (!state.contentFocused) {
             viewModel.enterContent()
         } else {
@@ -44,6 +54,8 @@ class QuickMenuInputHandler(
     override fun onLeft(): InputResult {
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
+
+        if (state.showAppPicker) return InputResult.HANDLED
 
         if (state.contentFocused) {
             if (state.selectedOrb == QuickMenuOrb.APPS) {
@@ -59,6 +71,8 @@ class QuickMenuInputHandler(
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
 
+        if (state.showAppPicker) return InputResult.HANDLED
+
         if (state.contentFocused) {
             if (state.selectedOrb == QuickMenuOrb.APPS) {
                 viewModel.moveContentRight()
@@ -73,11 +87,20 @@ class QuickMenuInputHandler(
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
 
+        if (state.showAppPicker) {
+            viewModel.selectAppFromPicker()
+            return InputResult.HANDLED
+        }
+
         if (state.contentFocused) {
             if (state.selectedOrb == QuickMenuOrb.APPS) {
-                viewModel.getSelectedAppPackage()?.let { packageName ->
-                    viewModel.hide()
-                    onLaunchApp(packageName)
+                if (viewModel.isAddAppTileFocused()) {
+                    viewModel.openAppPicker()
+                } else {
+                    viewModel.getSelectedAppPackage()?.let { packageName ->
+                        viewModel.hide()
+                        onLaunchApp(packageName)
+                    }
                 }
             } else if (viewModel.isOnRecentSearches()) {
                 viewModel.selectRecentSearch(state.focusedContentIndex)
@@ -98,6 +121,11 @@ class QuickMenuInputHandler(
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
 
+        if (state.showAppPicker) {
+            viewModel.closeAppPicker()
+            return InputResult.HANDLED
+        }
+
         if (state.contentFocused) {
             viewModel.exitContent()
         } else {
@@ -110,6 +138,11 @@ class QuickMenuInputHandler(
     override fun onLeftStickClick(): InputResult {
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
+
+        if (state.showAppPicker) {
+            viewModel.closeAppPicker()
+            return InputResult.HANDLED
+        }
 
         if (state.contentFocused) {
             viewModel.exitContent()
@@ -124,6 +157,8 @@ class QuickMenuInputHandler(
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
 
+        if (state.showAppPicker) return InputResult.HANDLED
+
         viewModel.moveOrbLeft()
         return InputResult.HANDLED
     }
@@ -131,6 +166,8 @@ class QuickMenuInputHandler(
     override fun onNextSection(): InputResult {
         val state = viewModel.uiState.value
         if (!state.isVisible) return InputResult.UNHANDLED
+
+        if (state.showAppPicker) return InputResult.HANDLED
 
         viewModel.moveOrbRight()
         return InputResult.HANDLED

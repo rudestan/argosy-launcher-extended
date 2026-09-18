@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
+import com.nendo.argosy.ui.quickmenu.components.QuickMenuAppPicker
 import com.nendo.argosy.ui.quickmenu.components.QuickMenuContent
 import com.nendo.argosy.ui.quickmenu.components.QuickMenuOrbRow
 import com.nendo.argosy.ui.theme.Dimens
@@ -130,6 +131,7 @@ fun QuickMenuOverlay(
                         viewModel.selectRecentSearch(query)
                     },
                     onAppLaunch = onLaunchApp,
+                    onAddApp = { viewModel.openAppPicker() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -143,5 +145,17 @@ fun QuickMenuOverlay(
                 Spacer(modifier = Modifier.weight(topSpacerWeight))
             }
         }
+    }
+
+    if (uiState.showAppPicker) {
+        QuickMenuAppPicker(
+            installedApps = uiState.pickerInstalledApps,
+            systemApps = uiState.pickerSystemApps,
+            hiddenApps = uiState.pickerHiddenApps,
+            focusedIndex = uiState.appPickerFocusIndex,
+            onSelect = { _ -> viewModel.selectAppFromPicker() },
+            onDismiss = { viewModel.closeAppPicker() },
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }

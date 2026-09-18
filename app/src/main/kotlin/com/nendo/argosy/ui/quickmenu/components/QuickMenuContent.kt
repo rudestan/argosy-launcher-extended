@@ -10,6 +10,7 @@ import androidx.compose.foundation.border
 import com.nendo.argosy.ui.util.clickableNoFocus
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Public
@@ -68,6 +71,7 @@ import com.nendo.argosy.ui.quickmenu.QuickMenuOrb
 import com.nendo.argosy.ui.quickmenu.QuickMenuUiState
 import com.nendo.argosy.ui.theme.Dimens
 import com.nendo.argosy.ui.theme.LocalArgosyTheme
+import com.nendo.argosy.ui.theme.LocalLauncherTheme
 
 @Composable
 fun QuickMenuContent(
@@ -77,6 +81,7 @@ fun QuickMenuContent(
     onGameSelect: (Long) -> Unit,
     onRecentSearchSelect: (String) -> Unit,
     onAppLaunch: (String) -> Unit,
+    onAddApp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val contentAlpha = if (isFocused) 1f else 0.7f
@@ -139,6 +144,7 @@ fun QuickMenuContent(
                 focusedIndex = uiState.focusedContentIndex,
                 isFocused = isFocused,
                 onAppLaunch = onAppLaunch,
+                onAddApp = onAddApp,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -424,17 +430,14 @@ private fun AppsContent(
     focusedIndex: Int,
     isFocused: Boolean,
     onAppLaunch: (String) -> Unit,
+    onAddApp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (apps.isEmpty()) {
-        EmptyState(message = stringResource(R.string.ui_quick_menu_empty_apps))
-        return
-    }
-
     val gridState = rememberLazyGridState()
+    val totalCount = apps.size + 1
 
     LaunchedEffect(focusedIndex) {
-        if (focusedIndex in apps.indices) {
+        if (focusedIndex in 0 until totalCount) {
             val rowStart = (focusedIndex / QUICK_MENU_APP_GRID_COLUMNS) * QUICK_MENU_APP_GRID_COLUMNS
             gridState.animateScrollToItem(rowStart)
         }
@@ -455,6 +458,59 @@ private fun AppsContent(
                 onClick = { onAppLaunch(app.packageName) }
             )
         }
+        item(key = "add_app") {
+            AddAppTile(
+                isFocused = isFocused && focusedIndex == apps.size,
+                onClick = onAddApp
+            )
+        }
+    }
+}
+
+@Composable
+private fun AddAppTile(
+    isFocused: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val shape = RoundedCornerShape(Dimens.radiusMd)
+
+    Column(
+        modifier = modifier
+            .then(
+                if (isFocused) {
+                    Modifier.border(Dimens.borderMedium, MaterialTheme.colorScheme.primary, shape)
+                } else Modifier
+            )
+            .clip(shape)
+            .clickableNoFocus(onClick = onClick)
+            .background(
+                if (isFocused) LocalArgosyTheme.current.focusAccent.copy(alpha = 0.15f)
+                    .compositeOver(MaterialTheme.colorScheme.surface)
+                else MaterialTheme.colorScheme.surface,
+                shape
+            )
+            .padding(Dimens.radiusLg),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = stringResource(R.string.ui_quick_menu_add_app),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(Dimens.iconXl)
+        )
+
+        Spacer(modifier = Modifier.height(Dimens.spacingSm))
+
+        Text(
+            text = stringResource(R.string.ui_quick_menu_add_app),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -620,6 +676,195 @@ private fun EmptyState(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+fun QuickMenuAppPicker(
+    installedApps: List<QuickMenuAppUi>,
+    systemApps: List<QuickMenuAppUi>,
+    hiddenApps: List<QuickMenuAppUi>,
+    focusedIndex: Int,
+    onSelect: (String) -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val isDarkTheme = LocalLauncherTheme.current.isDarkTheme
+    val scrimColor = if (isDarkTheme) Color.Black.copy(alpha = 0.6f) else Color.White.copy(alpha = 0.55f)
+
+    val totalCount = installedApps.size + systemApps.size + hiddenApps.size
+
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxSize()
+            .background(scrimColor)
+            .clickableNoFocus(onClick = onDismiss),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .width(Dimens.modalWidth)
+                .heightIn(max = maxHeight * 0.8f)
+                .clip(RoundedCornerShape(Dimens.radiusPanel))
+                .background(MaterialTheme.colorScheme.surface)
+                .clickableNoFocus(enabled = false) {}
+                .padding(vertical = Dimens.spacingSm)
+        ) {
+            Text(
+                text = stringResource(R.string.ui_quick_menu_select_app),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(horizontal = Dimens.spacingMd, vertical = Dimens.radiusLg)
+            )
+
+            if (totalCount == 0) {
+                Text(
+                    text = stringResource(R.string.ui_quick_menu_empty_apps),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(Dimens.spacingLg)
+                )
+            } else {
+                val listState = rememberLazyListState()
+
+                LaunchedEffect(focusedIndex) {
+                    if (focusedIndex in 0 until totalCount) {
+                        val headersBefore = when {
+                            focusedIndex < installedApps.size ->
+                                if (installedApps.isNotEmpty()) 1 else 0
+                            focusedIndex < installedApps.size + systemApps.size ->
+                                (if (installedApps.isNotEmpty()) 1 else 0) +
+                                    (if (systemApps.isNotEmpty()) 1 else 0)
+                            else ->
+                                (if (installedApps.isNotEmpty()) 1 else 0) +
+                                    (if (systemApps.isNotEmpty()) 1 else 0) +
+                                    (if (hiddenApps.isNotEmpty()) 1 else 0)
+                        }
+                        listState.animateScrollToItemCentered(focusedIndex + headersBefore)
+                    }
+                }
+
+                val installedOffset = 0
+                val systemOffset = installedApps.size
+                val hiddenOffset = installedApps.size + systemApps.size
+
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spacingXs)
+                ) {
+                    if (installedApps.isNotEmpty()) {
+                        item(key = "header_installed") {
+                            AppPickerHeader(stringResource(R.string.ui_quick_menu_apps_section_installed))
+                        }
+                        itemsIndexed(installedApps, key = { _, app -> app.packageName }) { index, app ->
+                            QuickMenuAppPickerRow(
+                                app = app,
+                                isFocused = installedOffset + index == focusedIndex,
+                                onClick = { onSelect(app.packageName) }
+                            )
+                        }
+                    }
+                    if (systemApps.isNotEmpty()) {
+                        item(key = "header_system") {
+                            AppPickerHeader(stringResource(R.string.ui_quick_menu_apps_section_system))
+                        }
+                        itemsIndexed(systemApps, key = { _, app -> app.packageName }) { index, app ->
+                            QuickMenuAppPickerRow(
+                                app = app,
+                                isFocused = systemOffset + index == focusedIndex,
+                                onClick = { onSelect(app.packageName) }
+                            )
+                        }
+                    }
+                    if (hiddenApps.isNotEmpty()) {
+                        item(key = "header_hidden") {
+                            AppPickerHeader(stringResource(R.string.ui_quick_menu_apps_section_hidden))
+                        }
+                        itemsIndexed(hiddenApps, key = { _, app -> app.packageName }) { index, app ->
+                            QuickMenuAppPickerRow(
+                                app = app,
+                                isFocused = hiddenOffset + index == focusedIndex,
+                                onClick = { onSelect(app.packageName) }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AppPickerHeader(title: String) {
+    Text(
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(horizontal = Dimens.spacingMd, vertical = Dimens.spacingXs)
+    )
+}
+
+@Composable
+private fun QuickMenuAppPickerRow(
+    app: QuickMenuAppUi,
+    isFocused: Boolean,
+    onClick: () -> Unit
+) {
+    val shape = RoundedCornerShape(Dimens.radiusMd)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (isFocused) {
+                    Modifier.border(Dimens.borderMedium, MaterialTheme.colorScheme.primary, shape)
+                } else Modifier
+            )
+            .background(
+                if (isFocused) LocalArgosyTheme.current.focusAccent.copy(alpha = 0.15f)
+                    .compositeOver(MaterialTheme.colorScheme.surface)
+                else MaterialTheme.colorScheme.surface,
+                shape
+            )
+            .clip(shape)
+            .clickableNoFocus(onClick = onClick)
+            .padding(horizontal = Dimens.spacingMd, vertical = Dimens.spacingSm),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        SubcomposeAsyncImage(
+            model = AppIconData(app.packageName),
+            contentDescription = app.label,
+            modifier = Modifier
+                .size(Dimens.iconMd)
+                .clip(RoundedCornerShape(Dimens.radiusMd))
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            error = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = app.label.take(1).uppercase(),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        )
+
+        Spacer(modifier = Modifier.width(Dimens.spacingMd))
+
+        Text(
+            text = app.label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = if (isFocused) lerp(LocalArgosyTheme.current.focusAccent, Color.White, 0.45f)
+                else MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

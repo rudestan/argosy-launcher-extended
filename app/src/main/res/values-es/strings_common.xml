@@ -653,6 +653,11 @@
     <string name="ui_quick_menu_empty_favorites">Aún no hay favoritos</string>
     <string name="ui_quick_menu_empty_random">No hay juegos disponibles</string>
     <string name="ui_quick_menu_empty_apps">No se agregaron apps</string>
+    <string name="ui_quick_menu_add_app">Agregar app</string>
+    <string name="ui_quick_menu_select_app">Seleccionar app</string>
+    <string name="ui_quick_menu_apps_section_installed">Instaladas</string>
+    <string name="ui_quick_menu_apps_section_system">Sistema</string>
+    <string name="ui_quick_menu_apps_section_hidden">Ocultas</string>
     <string name="ui_quick_menu_search_placeholder">Buscar juegos...</string>
     <string name="ui_quick_menu_search_prompt">Escribe al menos 2 caracteres para buscar</string>
     <string name="ui_quick_menu_search_no_results">No se encontraron juegos para \"%1$s\"</string>
