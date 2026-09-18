@@ -628,6 +628,16 @@
     <string name="ui_quick_menu_empty_recent">沒有最近遊玩的遊戲</string>
     <string name="ui_quick_menu_empty_favorites">尚無最愛</string>
     <string name="ui_quick_menu_empty_random">沒有可用的遊戲</string>
+    <string name="ui_quick_menu_empty_apps">尚未加入應用程式</string>
+    <string name="ui_quick_menu_add_app">新增應用程式</string>
+    <string name="ui_quick_menu_select_app">選擇應用程式</string>
+    <string name="ui_quick_menu_apps_section_installed">已安裝</string>
+    <string name="ui_quick_menu_apps_section_system">系統</string>
+    <string name="ui_quick_menu_apps_section_hidden">已隱藏</string>
+    <string name="ui_quick_menu_remove_confirm_title">從快速選單移除</string>
+    <string name="ui_quick_menu_remove_confirm_message">從快速啟動移除此應用程式？</string>
+    <string name="ui_quick_menu_remove_confirm_yes">是</string>
+    <string name="ui_quick_menu_remove_confirm_no">否</string>
     <string name="ui_quick_menu_search_placeholder">搜尋遊戲...</string>
     <string name="ui_quick_menu_search_prompt">請輸入至少2個字元進行搜尋</string>
     <string name="ui_quick_menu_search_no_results">找不到符合「%1$s」的遊戲</string>

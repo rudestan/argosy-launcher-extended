@@ -18,6 +18,7 @@ data class AppPreferences(
     val betaUpdatesEnabled: Boolean = false,
     val hiddenApps: Set<String> = emptySet(),
     val secondaryHomeApps: Set<String> = emptySet(),
+    val quickMenuApps: Set<String> = emptySet(),
     val visibleSystemApps: Set<String> = emptySet(),
     val appOrder: List<String> = emptyList(),
     val lastSeenVersion: String? = null,
@@ -42,6 +43,7 @@ class AppPreferencesRepository @Inject constructor(
         val BETA_UPDATES_ENABLED = booleanPreferencesKey("beta_updates_enabled")
         val HIDDEN_APPS = stringPreferencesKey("hidden_apps")
         val SECONDARY_HOME_APPS = stringPreferencesKey("secondary_home_apps")
+        val QUICK_MENU_APPS = stringPreferencesKey("quick_menu_apps")
         val VISIBLE_SYSTEM_APPS = stringPreferencesKey("visible_system_apps")
         val APP_ORDER = stringPreferencesKey("app_order")
         val PLATFORM_ORDER_CUSTOMISED = booleanPreferencesKey("platform_order_customised")
@@ -68,6 +70,11 @@ class AppPreferencesRepository @Inject constructor(
                 ?.toSet()
                 ?: emptySet(),
             secondaryHomeApps = prefs[Keys.SECONDARY_HOME_APPS]
+                ?.split(",")
+                ?.filter { it.isNotBlank() }
+                ?.toSet()
+                ?: emptySet(),
+            quickMenuApps = prefs[Keys.QUICK_MENU_APPS]
                 ?.split(",")
                 ?.filter { it.isNotBlank() }
                 ?.toSet()
@@ -121,6 +128,13 @@ class AppPreferencesRepository @Inject constructor(
         dataStore.edit { prefs ->
             if (apps.isEmpty()) prefs.remove(Keys.SECONDARY_HOME_APPS)
             else prefs[Keys.SECONDARY_HOME_APPS] = apps.joinToString(",")
+        }
+    }
+
+    suspend fun setQuickMenuApps(apps: Set<String>) {
+        dataStore.edit { prefs ->
+            if (apps.isEmpty()) prefs.remove(Keys.QUICK_MENU_APPS)
+            else prefs[Keys.QUICK_MENU_APPS] = apps.joinToString(",")
         }
     }
 

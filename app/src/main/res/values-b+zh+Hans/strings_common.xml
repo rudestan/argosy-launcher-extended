@@ -612,6 +612,16 @@
     <string name="ui_quick_menu_empty_recent">没有最近游玩记录</string>
     <string name="ui_quick_menu_empty_favorites">还没有收藏</string>
     <string name="ui_quick_menu_empty_random">没有可用的游戏</string>
+    <string name="ui_quick_menu_empty_apps">未添加应用</string>
+    <string name="ui_quick_menu_add_app">添加应用</string>
+    <string name="ui_quick_menu_select_app">选择应用</string>
+    <string name="ui_quick_menu_apps_section_installed">已安装</string>
+    <string name="ui_quick_menu_apps_section_system">系统</string>
+    <string name="ui_quick_menu_apps_section_hidden">已隐藏</string>
+    <string name="ui_quick_menu_remove_confirm_title">从快捷菜单移除</string>
+    <string name="ui_quick_menu_remove_confirm_message">从快速启动中移除此应用？</string>
+    <string name="ui_quick_menu_remove_confirm_yes">是</string>
+    <string name="ui_quick_menu_remove_confirm_no">否</string>
     <string name="ui_quick_menu_search_placeholder">搜索游戏...</string>
     <string name="ui_quick_menu_search_prompt">至少输入2个字符进行搜索</string>
     <string name="ui_quick_menu_search_no_results">未找到“%1$s”的相关游戏</string>

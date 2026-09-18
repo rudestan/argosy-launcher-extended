@@ -25,6 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.res.stringResource
+import com.nendo.argosy.R
+import com.nendo.argosy.ui.primitives.ArgosyConfirmModalHost
+import com.nendo.argosy.ui.quickmenu.components.QuickMenuAppPicker
 import com.nendo.argosy.ui.quickmenu.components.QuickMenuContent
 import com.nendo.argosy.ui.quickmenu.components.QuickMenuOrbRow
 import com.nendo.argosy.ui.theme.Dimens
@@ -36,7 +40,7 @@ import com.nendo.argosy.ui.util.doubleTapNoFocus
 fun QuickMenuOverlay(
     viewModel: QuickMenuViewModel,
     onGameSelect: (Long) -> Unit,
-    onNavigateToApps: () -> Unit,
+    onLaunchApp: (String) -> Unit,
     closeQuickMenu: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -108,13 +112,8 @@ fun QuickMenuOverlay(
                 selectedOrb = uiState.selectedOrb,
                 isOrbRowFocused = !uiState.contentFocused,
                 onOrbClick = { orb ->
-                    if (orb == QuickMenuOrb.APPS) {
-                        viewModel.hide()
-                        onNavigateToApps()
-                    } else {
-                        viewModel.selectOrb(orb)
-                        viewModel.enterContent()
-                    }
+                    viewModel.selectOrb(orb)
+                    viewModel.enterContent()
                 },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -134,6 +133,9 @@ fun QuickMenuOverlay(
                     onRecentSearchSelect = { query ->
                         viewModel.selectRecentSearch(query)
                     },
+                    onAppLaunch = onLaunchApp,
+                    onRemoveApp = { viewModel.requestRemoveApp(it) },
+                    onAddApp = { viewModel.openAppPicker() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -148,4 +150,27 @@ fun QuickMenuOverlay(
             }
         }
     }
+
+    if (uiState.showAppPicker) {
+        QuickMenuAppPicker(
+            installedApps = uiState.pickerInstalledApps,
+            systemApps = uiState.pickerSystemApps,
+            hiddenApps = uiState.pickerHiddenApps,
+            focusedIndex = uiState.appPickerFocusIndex,
+            onSelect = { _ -> viewModel.selectAppFromPicker() },
+            onDismiss = { viewModel.closeAppPicker() },
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+
+    ArgosyConfirmModalHost(
+        visible = uiState.showRemoveConfirm,
+        title = stringResource(R.string.ui_quick_menu_remove_confirm_title),
+        message = stringResource(R.string.ui_quick_menu_remove_confirm_message),
+        confirmLabel = stringResource(R.string.ui_quick_menu_remove_confirm_yes),
+        cancelLabel = stringResource(R.string.ui_quick_menu_remove_confirm_no),
+        destructive = true,
+        onConfirm = { viewModel.confirmRemoveApp() },
+        onDismiss = { viewModel.cancelRemoveApp() }
+    )
 }

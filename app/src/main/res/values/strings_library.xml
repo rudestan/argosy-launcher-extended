@@ -318,6 +318,12 @@
     <!-- Entry in an app's action menu when the app is not on Argosy's home screen. Verb
          phrase, puts it there. -->
     <string name="library_apps_menu_add_to_home">Add to Home</string>
+    <!-- Entry in an app's action menu when the app is already in the quick menu's Apps list.
+         Verb phrase, takes it out. -->
+    <string name="library_apps_menu_remove_from_quick_menu">Remove from Quick Menu</string>
+    <!-- Entry in an app's action menu when the app is not in the quick menu's Apps list. Verb
+         phrase, puts it there. -->
+    <string name="library_apps_menu_add_to_quick_menu">Add to Quick Menu</string>
     <!-- Entry in an app's action menu when the app is already on the second screen's home.
          Verb phrase, takes it off. -->
     <string name="library_apps_menu_remove_from_second_screen">Remove from Second Screen</string>

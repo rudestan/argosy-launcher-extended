@@ -1305,6 +1305,27 @@
     <string name="ui_quick_menu_empty_favorites">No favorites yet</string>
     <!-- Shown under the random orb when the library is empty. -->
     <string name="ui_quick_menu_empty_random">No games available</string>
+    <!-- Shown under the apps orb when no app has been added to it yet. -->
+    <string name="ui_quick_menu_empty_apps">No apps added</string>
+    <!-- Label on the square tile at the end of the quick menu's apps grid. Verb phrase, opens the
+         app picker. -->
+    <string name="ui_quick_menu_add_app">Add App</string>
+    <!-- Heading of the picker opened by the Add App tile. Verb phrase. -->
+    <string name="ui_quick_menu_select_app">Select App</string>
+    <!-- Section heading in the app picker, over the user-installed apps. Adjective, plural. -->
+    <string name="ui_quick_menu_apps_section_installed">Installed</string>
+    <!-- Section heading in the app picker, over the apps that ship with the device. Noun. -->
+    <string name="ui_quick_menu_apps_section_system">System</string>
+    <!-- Section heading in the app picker, over the apps the user has hidden. Adjective, plural. -->
+    <string name="ui_quick_menu_apps_section_hidden">Hidden</string>
+    <!-- Title of the confirmation before an app is removed from the quick menu. Noun phrase. -->
+    <string name="ui_quick_menu_remove_confirm_title">Remove from Quick Menu</string>
+    <!-- Body of that confirmation. Question asking whether to remove the app. -->
+    <string name="ui_quick_menu_remove_confirm_message">Remove the application from quick launch?</string>
+    <!-- Confirming button on that dialog. -->
+    <string name="ui_quick_menu_remove_confirm_yes">Yes</string>
+    <!-- Cancelling button on that dialog. -->
+    <string name="ui_quick_menu_remove_confirm_no">No</string>
     <!-- Placeholder in the quick menu's search field. -->
     <string name="ui_quick_menu_search_placeholder">Search games...</string>
     <!-- Shown under an almost-empty search field, saying how much to type. -->

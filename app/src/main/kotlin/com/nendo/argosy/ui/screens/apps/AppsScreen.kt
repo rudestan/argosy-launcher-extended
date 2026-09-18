@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Devices
@@ -36,6 +37,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.Devices
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.CircularProgressIndicator
@@ -361,6 +363,7 @@ fun AppsScreen(
                                 isAppHidden = uiState.focusedApp?.isHidden ?: false,
                                 isOnHome = uiState.focusedApp?.isOnHome ?: false,
                                 isOnSecondaryHome = uiState.focusedApp?.isOnSecondaryHome ?: false,
+                                isOnQuickMenu = uiState.focusedApp?.isOnQuickMenu ?: false,
                                 onClick = {
                                     viewModel.selectContextMenuItem(index)
                                 }
@@ -421,6 +424,7 @@ private fun ContextMenuItem(
     isAppHidden: Boolean = false,
     isOnHome: Boolean = false,
     isOnSecondaryHome: Boolean = false,
+    isOnQuickMenu: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     val (icon, label) = when (item) {
@@ -432,6 +436,11 @@ private fun ContextMenuItem(
             Icons.Default.Home to stringResource(R.string.library_apps_menu_remove_from_home)
         } else {
             Icons.Outlined.Home to stringResource(R.string.library_apps_menu_add_to_home)
+        }
+        AppContextMenuItem.TOGGLE_QUICK_MENU -> if (isOnQuickMenu) {
+            Icons.Default.Apps to stringResource(R.string.library_apps_menu_remove_from_quick_menu)
+        } else {
+            Icons.Outlined.Apps to stringResource(R.string.library_apps_menu_add_to_quick_menu)
         }
         AppContextMenuItem.TOGGLE_SECONDARY_HOME -> if (isOnSecondaryHome) {
             Icons.Default.Devices to stringResource(R.string.library_apps_menu_remove_from_second_screen)

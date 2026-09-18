@@ -446,10 +446,12 @@ fun ArgosyApp(
                     }
                 }
             },
-            onNavigateToApps = {
+            onLaunchApp = { packageName ->
                 closeQuickMenu()
-                navController.navigate(Screen.Apps.route) {
-                    launchSingleTop = true
+                quickMenuViewModel.getLaunchIntent(packageName)?.let { intent ->
+                    try {
+                        context.startActivity(intent)
+                    } catch (_: Exception) { }
                 }
             },
             onDismiss = { closeQuickMenu() }
@@ -2063,10 +2065,12 @@ fun ArgosyApp(
                         }
                     }
                 },
-                onNavigateToApps = {
+                onLaunchApp = { packageName ->
                     closeQuickMenu()
-                    navController.navigate(Screen.Apps.route) {
-                        launchSingleTop = true
+                    quickMenuViewModel.getLaunchIntent(packageName)?.let { intent ->
+                        try {
+                            context.startActivity(intent)
+                        } catch (_: Exception) { }
                     }
                 },
                 closeQuickMenu = closeQuickMenu
